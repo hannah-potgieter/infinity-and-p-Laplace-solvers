@@ -1,0 +1,80 @@
+# Listing of Parameters For the Newton p-Laplacian Solver
+
+subsection Global Parameters
+	# Penalization parameter (target p value)
+	set p = 200
+
+	# Boolean whether exact solution to compare exists
+	set known_solution=true
+end
+
+
+subsection Mesh & Refinement Parameters
+	
+	# Choose the dimension: 
+	set Dimension=2
+
+	# Choose the domain: 0 (ball), 1 (square/cube)
+	set Code for the domain=0
+
+	# Natural Boundary: 0 (Dirichlet zero), 1 (Dirichlet Absolute), 2 (Dirichlet Aronsson), 3 (Neumann zero)
+	set Code for the natural boundary=2
+
+	# Feature Boundary: 0 (none), 1 (origin)
+	set Code for the feature boundary=0
+
+	# RHS: 0 (homogeneous), 1 (distance problem)
+	set Code for the RHS=0
+
+	# Number of global mesh refinement steps applied to initial coarse grid
+	set No of initial refinements = 4
+
+	# Number of global adaptive mesh refinements
+	set No of adaptive refinements = 0
+
+	# Refinement threshold
+	set top_fraction_of_cells=0.2
+
+	# Coarsening threshold
+	set bottom_fraction_of_cells=0.05
+end
+
+subsection Algorithm Parameters
+
+	# initial p
+	set init_p = 2
+
+	# step for increasing p
+	set delta_p = 1
+
+	# Maximum Number of CG iterations
+	set Max_CG_it=2000
+
+	# Tolerance for CG iterations
+	set CG_tol=1e-6
+	
+	# initial step-length	
+	set init_step_length=1e-1
+
+	# Maximum Number of Line-Search iterations
+	set max_LS_it=200
+
+	# Line-Search tolerance constant (c1 in Nocedal-Wright)
+	set line_search_tolerence=1e-3
+		
+	# Maximum Number of inner iterations
+	set Max_inner=50
+		
+	# Threshold on norm of the derivative to declare optimality achieved
+	set eps=1e-6	
+		
+	# Threshold on norm of the derivative to declare optimality achieved in highly refined mesh
+	set hi_eps=1e-9
+	
+	# Number of adaptive refinement before change convergence threshold
+	set hi_th=6
+end
+
+
+
+
