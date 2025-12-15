@@ -23,11 +23,11 @@ Each category contains one or more examples.
 
 The solvers target nonlinear elliptic problems of the form
 
-[
--\nabla \cdot (|\nabla u|^{p-2} \nabla u) = f \quad \text{in } \Omega,
-]
 
-with Dirichlet or mixed Dirichlet–Neumann boundary conditions. Large values of (p) are handled via continuation in (p), enabling approximation of limiting infinity‑Laplace and distance‑type problems.
+$$-\nabla \cdot (|\nabla u|^{p-2} \nabla u) = f \quad \text{in } \Omega,$$
+
+
+with Dirichlet or mixed Dirichlet–Neumann boundary conditions. Large values of $p$ are handled via continuation in $p$, enabling approximation of limiting infinity‑Laplace and distance‑type problems.
 
 ---
 
