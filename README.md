@@ -1,6 +1,6 @@
-# FEM Training Data Generation for p-Laplace Problems
+# FEM Training Data Generation for $p$-Laplace Problems
 
-This repository contains C++ codes for generating training data using the finite element method (FEM) for p-Laplace and related large‑p / infinity‑Laplace problems. The codes are intended to produce solution data for downstream machine‑learning workflows.
+This repository contains C++ codes for generating training data using the finite element method (FEM) for $p$-Laplace and infinity‑Laplace problems, the latter done via large $p$ approximation. The codes generate numerical solution data that may be used to train or evaluate machine-learning models such as PINNs or DeepONets.
 
 All solvers are implemented using the **deal.II finite element library (version 9.6.1)**. Each group of examples compiles and runs independently using CMake.
 
@@ -60,7 +60,7 @@ This configures the example against an existing deal.II installation and builds 
 
 ## Output
 
-Each example produces numerical solutions of the p‑Laplace problem on the specified domain, suitable for use as training data. Output formats and exact contents may vary between example sets.
+Each example produces numerical solutions of the $p$‑Laplace problem on the specified domain, suitable for use as training data. Output formats and exact contents may vary between example sets.
 
 ---
 
