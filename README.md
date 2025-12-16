@@ -27,7 +27,7 @@ The solvers target nonlinear elliptic problems of the form
 $$-\nabla \cdot (|\nabla u|^{p-2} \nabla u) = f \quad \text{in } \Omega,$$
 
 
-with Dirichlet or mixed Dirichlet–Neumann boundary conditions. Large values of $p$ are handled via continuation in $p$, enabling approximation of limiting infinity‑Laplace and distance‑type problems.
+with Dirichlet or mixed Dirichlet–Neumann boundary conditions. Large values of $p$ are handled via continuation in $p$, enabling approximation of limiting infinity‑Laplace and distance approximation problems.
 
 ---
 
@@ -47,7 +47,7 @@ Other versions of deal.II may work but are not guaranteed.
 
 Each example set is built and run independently from its own directory.
 
-A typical workflow is:
+To configure and execute an example:
 
 ```bash
 cmake -DDEAL_II_DIR=/path/to/dealii .
@@ -67,4 +67,4 @@ Each example produces numerical solutions of the $p$‑Laplace problem on the sp
 ## Notes
 
 * The codes assume familiarity with deal.II and nonlinear FEM workflows.
-* Each example directory is expected to document its own specific setup and parameters in a local README.
+* Each examples folder documents its own specific setup and parameters in a local README.
