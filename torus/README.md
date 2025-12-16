@@ -54,7 +54,9 @@ Algorithm Parameters:
 
 From inside the torus directory, run
 
+```
 cmake -DDEAL_II_DIR=/path/to/dealii .
 make run
+```
 
 This configures the example against an existing deal.II installation and runs the solver using PARAMStorus.prm.
