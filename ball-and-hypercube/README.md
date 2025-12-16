@@ -108,7 +108,7 @@ This problem prescribes Dirichlet boundary data corresponding to the limiting $p
 In 2D, the exact solution is
 
 $$
-u_\infty(x,y) = |x|^{4/3} - |y|^{4/3}.
+u_\infty(x,y) = |x~|^{4/3} - |y~|^{4/3}.
 $$
 
 The $p$-Laplacian problem solved is
