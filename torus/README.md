@@ -12,9 +12,9 @@ This folder contains a Newton finite element solver for the $p$-Laplacian on a 3
 
 The computational domain $\Omega \subset \mathbb{R}^3$ is a torus with major radius $R = 2$ and minor radius $r = 1$, defined implicitly by
 
-$$\Omega = \lbrace (x,y,z) \in \mathbb{R}^3 | ( 2 - \sqrt(x^2 + z^2) )^2 + y^2 \leq 1 \rbrace.$$
+$$\Omega = \lbrace (x,y,z) \in \mathbb{R}^3 | ( 2 - \sqrt{x^2 + z^2} )^2 + y^2 \leq 1 \rbrace.$$
 
-The boundary is then $\partial \Omega = \lbrace (x,y,z) \in \mathbb{R}^3 | ( 2 - \sqrt(x^2 + z^2) )^2 + y^2 = 1 \rbrace.$
+The boundary is then $\partial \Omega = \lbrace (x,y,z) \in \mathbb{R}^3 | ( 2 - \sqrt{x^2 + z^2} )^2 + y^2 = 1 \rbrace.$
 
 ## Boundary value problem 
 
