@@ -66,5 +66,5 @@ Each example produces numerical solutions of the $p$‑Laplace problem on the sp
 
 ## Notes
 
-* The codes assume familiarity with deal.II and nonlinear FEM workflows.
+* The codes assume familiarity with deal.II and Newton iterations for approximating solution of nonlinear PDEs.
 * Each examples folder documents its own specific setup and parameters in a local README.
