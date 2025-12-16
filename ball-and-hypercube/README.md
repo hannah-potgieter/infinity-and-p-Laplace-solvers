@@ -1,4 +1,4 @@
-# Balls and Squares / Hypercubes: p-Laplacian Test Problems
+# Balls and Squares / Hypercubes: $p$-Laplacian Test Problems
 
 This folder contains a Newton finite element solver for the $p$-Laplacian on standard reference domains in both 2D and 3D, implemented using deal.II version 9.6.1.
 
@@ -52,7 +52,7 @@ Several boundary value problems are supported through combinations of boundary c
 
 ### 1. Distance-to-origin problem
 
-This problem computes the distance to the origin in the large-$p$ limit.
+This problem computes the distance to the origin in the large $p$ limit.
 
 $$
 \begin{cases}
