@@ -165,7 +165,7 @@ As $p \to \infty$, the numerical solution converges to the prescribed absolute-v
 
 ### 5. Arctan Dirichlet problem
 
-This problem prescribes Dirichlet boundary data given by an absolute-value function, analogous to the Aronsson case.
+This problem prescribes Dirichlet boundary data given by an arctan function, also analogous to the Aronsson case.
 
 In 2D, the boundary data is
 
