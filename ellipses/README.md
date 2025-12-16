@@ -122,10 +122,8 @@ As $p \to \infty$, the numerical solution converges to the exact Aronsson soluti
 
 - The solver uses continuation in p, starting from a small initial value and increasing to a target value.
 - Setting
-  ```
-  set known_solution = true
-  ```
-  enables comparison against the limiting \(p \to \infty\) solution.
+  `set known_solution = true`
+  enables comparison against the limiting $p \to \infty$ solution.
 - Errors are measured relative to the limiting solution and decrease as $p$ increases for all supported (described above) problem types.
 
 ---
