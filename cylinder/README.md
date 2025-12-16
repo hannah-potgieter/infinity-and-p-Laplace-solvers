@@ -33,26 +33,27 @@ This is the only cylinder configuration explicitly implemented in this folder.
 
 - The solver uses continuation in $p$, starting from a small initial value and increasing to a target value.
 - As $p \to \infty$, the solution $u_p$ converges to the distance-to-boundary function on the cylinder.
-- Setting 'known_solution = true' enables comparison against this limiting $p \to \infty$ solution.
+- Setting `known_solution = true` enables comparison against this limiting $p \to \infty$ solution.
 - Errors are measured relative to the limiting solution and decrease as $p$ increases.
 
 ## Parameter file (PARAMScyl.prm)
 
 Key parameters include:
 
-Global parameters:
-- p — target (final) value of $p$
-- known_solution — setting 'true' enables comparison against the $p \to \infty$ limit
+Global Parameters:
+- `p` — target (final) value of $p$
+- `known_solution`: setting `true` enables comparison against the $p \to \infty$ limiting solution
 
-Mesh and refinement parameters:
+Mesh and Refinement Parameters:
 - RHS is fixed to 1, corresponding to the distance-to-boundary problem
-- No of initial refinements controls the global mesh resolution
-- Adaptive refinement is disabled by default
+- `No. of initial refinements` controls the global mesh resolution
+- Adaptive refinement is disabled by default 
 
 Algorithm parameters:
-- init_p — initial value of $p$
-- delta_p — increment in $p$ during continuation
+- `init_p`: initial value of $p$
+- `delta_p`: increment in $p$ during continuation
 - Newton, CG, and line-search tolerances control nonlinear solver behavior
+
 
 ## Building and running
 
