@@ -80,7 +80,7 @@ As $p \to \infty$, the solution converges to the distance-to-origin function.
 
 ### 2. Distance-to-boundary problem
 
-This problem computes the distance to the boundary in the large-$p$ limit.
+This problem computes the distance to the boundary in the large $p$ limit.
 
 $$
 \begin{cases}
