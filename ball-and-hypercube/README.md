@@ -35,11 +35,15 @@ Two domain types are available:
 - **Square / Cube**  
   $$\Omega = [-1,1]^d$$
 
+- **Square / Cube (for arctan example)**  
+  $$\Omega = [0.01,1]^d$$
+
 The domain is selected via
 
 ```
 set Code for the domain = 0   # ball
-set Code for the domain = 1   # square (2D) / cube (3D)
+set Code for the domain = 1   # square (2D) / cube (3D) : [-1, 1]^d
+set Code for the domain = 2   # square (2D) / cube (3D) : [0.01, 1]^d
 ```
 
 ---
@@ -65,7 +69,7 @@ $$
 Parameter choices:
 
 ```
-set Code for the natural boundary = 3   # Neumann zero
+set Code for the natural boundary = 4   # Neumann zero
 set Code for the feature boundary = 1   # origin
 set Code for the RHS = 1
 ```
@@ -156,6 +160,38 @@ set Code for the RHS = 0
 ```
 
 As $p \to \infty$, the numerical solution converges to the prescribed absolute-value solution.
+
+---
+
+### 5. Arctan Dirichlet problem
+
+This problem prescribes Dirichlet boundary data given by an absolute-value function, analogous to the Aronsson case.
+
+In 2D, the boundary data is
+
+$$
+u_\infty(x,y) = \arctan(y/x).
+$$
+
+The $p$-Laplacian problem solved is
+
+$$
+\begin{cases}
+-\Delta_p u_p = 0, & \text{in } \Omega, \\
+u_p = u_\infty, & \text{on } \partial \Omega.
+\end{cases}
+$$
+
+Parameter choices:
+
+```
+set Code for the domain = 2             # square: [0.01, 1]^2 
+set Code for the natural boundary = 3   # Dirichlet Arctan
+set Code for the feature boundary = 0   # none
+set Code for the RHS = 0
+```
+
+As $p \to \infty$, the numerical solution converges to the prescribed arctan solution.
 
 ---
 
