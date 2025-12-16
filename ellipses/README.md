@@ -42,7 +42,7 @@ Three different boundary value problems are supported.
 
 ### 1. Distance-to-origin problem
 
-This problem computes the distance to the origin in the large-$p$ limit.
+This problem computes the distance to the origin in the large $p$ limit.
 
 $$
 \begin{cases}
@@ -66,7 +66,7 @@ As $p \to \infty$, the solution converges to the distance-to-origin function.
 
 ### 2. Distance-to-boundary problem
 
-This problem computes the distance to the boundary in the large-$p$ limit.
+This problem computes the distance to the boundary in the large $p$ limit.
 
 $$
 \begin{cases}
