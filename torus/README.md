@@ -29,7 +29,7 @@ This is the only torus configuration explicitly implemented in this folder.
 
 - The solver uses continuation in $p$, starting from a small initial value and increasing to a target value.
 - As $p$ tends to infinity, the solution $u_p$ converges to the distance-to-boundary function on the torus.
-- Setting 'known_solution = true' enables comparison against the limiting $p \to \infty$ solution.
+- Setting `known_solution = true` enables comparison against the limiting $p \to \infty$ solution.
 - Reported errors are measured relative to the limiting solution and decrease as $p$ increases.
 
 ## Parameter file (PARAMStorus.prm)
@@ -37,18 +37,19 @@ This is the only torus configuration explicitly implemented in this folder.
 Key parameters include:
 
 Global Parameters:
-- p: target (final) value of $p$
-- known_solution: setting 'true' enables error computation against the $p \to \infty$ limit
+- `p` — target (final) value of $p$
+- `known_solution`: setting `true` enables comparison against the $p \to \infty$ limiting solution
 
 Mesh and Refinement Parameters:
 - RHS is fixed to 1, corresponding to the distance-to-boundary problem
-- No. of initial refinements controls the global mesh resolution
+- `No. of initial refinements` controls the global mesh resolution
 - Adaptive refinement is disabled by default 
 
-Algorithm Parameters:
-- init_p: initial value of $p$
-- delta_p: increment in $p$ during continuation
+Algorithm parameters:
+- `init_p`: initial value of $p$
+- `delta_p`: increment in $p$ during continuation
 - Newton, CG, and line-search tolerances control nonlinear solver behavior
+
 
 ## Building and running
 
