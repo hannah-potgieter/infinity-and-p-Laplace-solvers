@@ -14,10 +14,10 @@ subsection Mesh & Refinement Parameters
 	# Choose the dimension: 
 	set Dimension=2
 
-	# Choose the domain: 0 (ball), 1 (square/cube)
-	set Code for the domain=0
+	# Choose the domain: 0 (ball), 1 (square/cube), 2 (square for arctan)
+	set Code for the domain=2
 
-	# Natural Boundary: 0 (Dirichlet zero), 1 (Dirichlet Absolute), 2 (Dirichlet Aronsson), 3 (Neumann zero)
+	# Natural Boundary: 0 (Dirichlet zero), 1 (Dirichlet Absolute), 2 (Dirichlet Aronsson), 3 (Dirichlet Arctan), 4 (Neumann zero)
 	set Code for the natural boundary=2
 
 	# Feature Boundary: 0 (none), 1 (origin)

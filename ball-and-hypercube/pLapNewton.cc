@@ -126,7 +126,7 @@ namespace nsp
                           "Number identifying the spatial domain");
       prm.declare_entry("Code for the domain", "0",Patterns::Integer(0,3),
                         "Number identifying the domain in which we solve the problem");
-     prm.declare_entry("Code for the natural boundary", "0",Patterns::Integer(0,3),
+     prm.declare_entry("Code for the natural boundary", "0",Patterns::Integer(0,4),
                           "Number identifying the natural boundary condition(s)");
      prm.declare_entry("Code for the feature boundary", "0",Patterns::Integer(0,1),
                               "Number identifying the feature boundary condition(s)");
@@ -202,7 +202,7 @@ namespace nsp
   template <int dim>
   double Solution<dim>::value (const Point<dim> &pto,const unsigned int) const
   {
-      if (gamma_1 == 1 && gamma_2 == 3 && rhs ==1){
+      if (gamma_1 == 1 && gamma_2 == 4 && rhs ==1){
           double r=sqrt(pto.square());
           return r;
       }
@@ -220,6 +220,10 @@ namespace nsp
           return (std::pow(std::abs(pto(0)), 4.0/3.0) -  std::pow( std::abs(pto(1)), 4.0/3.0) );
       }
       
+     else if (domain_id == 2 && gamma_1 == 0 && gamma_2 == 3 && rhs ==0){
+          return std::atan(pto[1]/pto[0]);
+      }
+      
       else {
           return 0.0;
       }
@@ -231,7 +235,7 @@ namespace nsp
   template <int dim>
   Tensor<1,dim> Solution<dim>::gradient (const Point<dim> &pto,const unsigned int) const
   {
-      if (gamma_1 == 1 && gamma_2 == 3 && rhs ==1){
+      if (gamma_1 == 1 && gamma_2 == 4 && rhs ==1){
           double r=sqrt(pto.square());
           return 1.0*pto/r;
       }
@@ -252,6 +256,14 @@ namespace nsp
            Tensor<1,dim> grd;
            grd[0] = 4.0/3.0 * pto(0) * std::pow(std::abs(pto(0)), -2.0/3.0);
            grd[1] = -4.0/3.0 * pto(1) * std::pow(std::abs(pto(1)), -2.0/3.0);
+          return grd;
+      }
+      
+      else if (domain_id == 2 && gamma_1 == 0 && gamma_2 == 3 && rhs ==0){
+          double r2=pto.square();
+          Tensor<1,dim> grd;
+          grd[0] = -pto[1]/r2;
+          grd[1] = pto[0]/r2;
           return grd;
       }
       
@@ -701,7 +713,7 @@ template <int dim>
       prm.enter_subsection ("Mesh & Refinement Parameters");
       const int gamma_2=prm.get_integer("Code for the natural boundary");
       prm.leave_subsection ();
-      if (gamma_2 != 3)
+      if (gamma_2 != 4)
       {
           VectorTools::interpolate_boundary_values (mapping, dof_handler,
                                                     0,
@@ -832,7 +844,7 @@ template <int dim>
       prm.enter_subsection ("Mesh & Refinement Parameters");
       const int gamma_2=prm.get_integer("Code for the natural boundary");
       prm.leave_subsection ();
-      if (gamma_2 != 3)
+      if (gamma_2 != 4)
       {
           VectorTools::interpolate_boundary_values (dof_handler,
                                                  0,
@@ -1014,6 +1026,13 @@ template <int dim>
       {
         // For square/cube
         GridGenerator::hyper_cube (triangulation, -1.0, 1.0);
+        dof_handler.distribute_dofs(fe);
+      }
+      
+     else if (domain_id==2)
+      {
+        // For arctan square [0.01, 1]^2
+        GridGenerator::hyper_cube (triangulation, 0.01, 1.0);
         dof_handler.distribute_dofs(fe);
       }
       
