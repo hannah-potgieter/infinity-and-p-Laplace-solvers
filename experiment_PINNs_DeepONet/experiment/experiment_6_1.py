@@ -24,7 +24,7 @@ import torch.autograd as autograd
 import matplotlib.pyplot as plt
 
 from PINNs_code import (
-    BasePINN, create_output_dirs, set_seed, get_device,
+    BasePINN, create_output_dirs, setup_logging, set_seed, get_device,
     InteriorSampler, split_data, train_pinn,
     plot_results, plot_pde_loss_distribution,
     generate_square_domain_data, generate_disc_domain_data,
@@ -235,15 +235,21 @@ def run_example(example_name, n_epochs=10, n_interior_grid=1000, n_boundary_grid
                 clip_residual=0.0, outlier_percentile=1.0, plot_pde_every=0,
                 output_dir='outputs', outlier_off_epoch=None,
                 domain_decomposition=False, n_interface_pts=200, interface_weight=1.0,
-                interface_every=5, save_npy=False):
+                interface_every=5, save_npy=False, run_tag=None):
     if hidden_layers is None:
         hidden_layers = [128, 128, 128, 128]
+
+    label = example_name + ('_dd' if domain_decomposition else '')
+    base = os.path.join(output_dir, 'expr_7_1', label)
+    if run_tag:
+        base = os.path.join(base, run_tag)
+    setup_logging(base)
 
     print(f"\n{'=' * 60}")
     print(f"Running Example: {example_name}")
     print(f"{'=' * 60}\n")
 
-    output_dirs = create_output_dirs(output_dir)
+    output_dirs = create_output_dirs(base)
 
     if example_name == 'arctan':
         f_exact = arctan_solution
@@ -350,28 +356,25 @@ def run_example(example_name, n_epochs=10, n_interior_grid=1000, n_boundary_grid
         t_full = (time.time() - t0) / 100
     print(f"Inference (per point): {t_pt:.4e}s | (full domain): {t_full:.4e}s")
 
-    # Save npy
     if save_npy:
-        npy_dir = os.path.join(output_dirs['base'], 'npy')
-        os.makedirs(npy_dir, exist_ok=True)
-        npy_name = f"{example_name}_dd" if domain_decomposition else example_name
+        npy_dir = output_dirs['npy']
         history_data = {k: np.array([v if v is not None else np.nan for v in vals])
                         for k, vals in history.items()}
-        np.savez(os.path.join(npy_dir, f'training_history_{npy_name}.npz'), **history_data)
+        np.savez(os.path.join(npy_dir, 'training_history.npz'), **history_data)
         model.eval()
         with torch.no_grad():
             y_pred = model(x_test_dev).cpu()
-        np.savez(os.path.join(npy_dir, f'exact_solution_{npy_name}.npz'),
+        np.savez(os.path.join(npy_dir, 'exact_solution.npz'),
                  x=x_test[:, 0].numpy(), y=x_test[:, 1].numpy(),
                  u_exact=y_test.numpy().flatten())
-        np.savez(os.path.join(npy_dir, f'predictions_{npy_name}.npz'),
+        np.savez(os.path.join(npy_dir, 'predictions.npz'),
                  x=x_test[:, 0].numpy(), y=x_test[:, 1].numpy(),
                  u_pred=y_pred.numpy().flatten())
         print(f"Saved .npz files to {npy_dir}/")
 
     fig = plot_results(model, x_test, y_test, history, title, device=device)
     if save_plots:
-        path = os.path.join(output_dirs['plots'], f'results_{example_name}.png')
+        path = os.path.join(output_dirs['plots'], 'results.png')
         fig.savefig(path, dpi=150, bbox_inches='tight')
         print(f"Saved plot to {path}")
     plt.show()
@@ -385,7 +388,7 @@ def run_example(example_name, n_epochs=10, n_interior_grid=1000, n_boundary_grid
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Experiment 6.1: 2D Infinity-Laplacian with PINNs',
+        description='2D Infinity-Laplacian with PINNs',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--example', type=str, default='aronsson_square',
@@ -405,6 +408,8 @@ if __name__ == '__main__':
     parser.add_argument('--outlier-off-epoch', type=int, default=None)
     parser.add_argument('--plot-pde-every', type=int, default=0)
     parser.add_argument('--output-dir', type=str, default='outputs')
+    parser.add_argument('--run-tag', type=str, default=None,
+                        help='Ablation tag; creates a subdirectory under the example folder')
     parser.add_argument('--no-save', action='store_true')
     parser.add_argument('--save-npy', action='store_true')
 
@@ -486,4 +491,5 @@ if __name__ == '__main__':
         n_interface_pts=args.n_interface_pts,
         interface_weight=args.interface_weight,
         interface_every=args.interface_every,
-        save_npy=args.save_npy)
+        save_npy=args.save_npy,
+        run_tag=args.run_tag)

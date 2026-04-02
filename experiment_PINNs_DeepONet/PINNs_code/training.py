@@ -13,6 +13,7 @@ Model contract:
 
 import copy
 import os
+import shutil
 import time
 from typing import List, Optional
 
@@ -322,7 +323,7 @@ def train_pinn(
 
                 if output_dirs:
                     ckpt = os.path.join(output_dirs['checkpoints'],
-                                        f'best_model_{example_name}.pt')
+                                        'best_model.pt')
                     torch.save({
                         'epoch': best_epoch,
                         'model_state_dict': best_model_state,
@@ -418,11 +419,11 @@ def train_pinn(
               f"(val_loss: {best_val_loss:.4e}, test_loss: {best_test:.4e})")
         if output_dirs:
             print(f"Best checkpoint saved to: "
-                  f"{os.path.join(output_dirs['checkpoints'], f'best_model_{example_name}.pt')}")
+                  f"{os.path.join(output_dirs['checkpoints'], 'best_model.pt')}")
 
     if output_dirs:
         final_path = os.path.join(output_dirs['checkpoints'],
-                                  f'final_model_{example_name}.pt')
+                                  'final_model.pt')
         torch.save({
             'epoch': n_epochs,
             'model_state_dict': model.state_dict(),
@@ -524,7 +525,7 @@ def train_pinn_iterative(
         if hasattr(alpha_scheduler, 'reset'):
             alpha_scheduler.reset()
 
-        stage_name = f"{example_name}_p{p}"
+        stage_name = f"p{p}"
 
         stage_history, stage_time = train_pinn(
             model, x_bc, y_bc, x_interior, x_test, y_test,
@@ -551,6 +552,15 @@ def train_pinn_iterative(
         )
 
         total_time += stage_time
+
+        if output_dirs:
+            ckpt_dir = output_dirs['checkpoints']
+            for base_name in ('best_model.pt', 'final_model.pt'):
+                src = os.path.join(ckpt_dir, base_name)
+                if os.path.exists(src):
+                    dst = os.path.join(ckpt_dir,
+                                       base_name.replace('.pt', f'_p{p}.pt'))
+                    shutil.copy2(src, dst)
 
         # Per-stage PDE test evaluation
         model.eval()
@@ -587,12 +597,11 @@ def train_pinn_iterative(
                 combined_history[key].extend(stage_history[key])
 
     if output_dirs:
-        import os
         torch.save({
             'epoch': len(combined_history['total_loss']),
             'model_state_dict': model.state_dict(),
             'history': combined_history,
-        }, os.path.join(output_dirs['checkpoints'], f'final_model_{example_name}.pt'))
+        }, os.path.join(output_dirs['checkpoints'], 'final_model.pt'))
 
     print(f"\nIterative training completed in {total_time:.2f}s")
     print(f"Total epochs: {len(combined_history['total_loss'])}")

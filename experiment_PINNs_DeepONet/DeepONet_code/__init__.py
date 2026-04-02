@@ -6,7 +6,7 @@ Re-exports every public symbol so callers can do::
     from DeepONet_code import DeepONet, train_deeponet, ...
 """
 
-from .utils import create_output_dirs, set_seed, get_device, determine_run_tag, save_mse_npz
+from .utils import create_output_dirs, setup_logging, set_seed, get_device, determine_run_tag, save_mse_npz
 from .models import DeepONet
 from .data import (
     DeepONetDataset,

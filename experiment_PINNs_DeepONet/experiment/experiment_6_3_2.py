@@ -31,7 +31,7 @@ from DeepONet_code import (
     DeepONet, DeepONetDataset, load_mat_files_per_p,
     infer_pinns_on_grid,
     train_deeponet, evaluate_over_p_range,
-    set_seed, get_device,
+    set_seed, get_device, create_output_dirs, setup_logging,
     determine_run_tag, save_mse_npz,
     plot_training_history, plot_mse_vs_p, plot_prediction_2d,
     distance_to_disc_boundary, dist_to_ellipse_boundary,
@@ -198,7 +198,7 @@ def make_test_grid_3d(domain, cfg, n=51):
 # =====================================================================
 
 def load_domain_data(domain, cfg, data_dir, add_exact_inf=True,
-                     pinns_checkpoint=None, pinns_file=None):
+                     pinns_checkpoint=None, pinns_file=None, npy_dir=None):
     """
     Load FEM ``.mat`` files, compute FEM-vs-exact MSE per p, and
     build the training arrays — all in one pass.
@@ -254,9 +254,9 @@ def load_domain_data(domain, cfg, data_dir, add_exact_inf=True,
         X_inf = np.hstack([pts_norm, p_col])
 
         if pinns_checkpoint:
-            cache = os.path.join(
-                'outputs', 'npy', f'pinns_inf_boundary_{domain}.npy',
-            )
+            cache_dir = npy_dir or 'outputs/npy'
+            os.makedirs(cache_dir, exist_ok=True)
+            cache = os.path.join(cache_dir, f'pinns_inf_boundary_{domain}.npy')
             Y_inf = infer_pinns_on_grid(
                 pinns_checkpoint, last_pts, cache_path=cache,
             )
@@ -304,8 +304,13 @@ def run_experiment(domain, args):
     cfg = ALL_DOMAINS[domain]
     dim = cfg['dim']
 
+    run_tag = determine_run_tag(args)
+    base = os.path.join(args.output_dir, 'expr_7_3_2', domain, run_tag)
+    setup_logging(base)
+    output_dirs = create_output_dirs(base)
+
     print(f"\n{'=' * 60}")
-    print(f"Experiment 6.3.2  —  Dist-to-Boundary  —  {cfg['name']}  ({dim}-D)")
+    print(f"Dist-to-Boundary  —  {cfg['name']}  ({dim}-D)")
     print(f"{'=' * 60}")
 
     set_seed(args.seed)
@@ -318,6 +323,7 @@ def run_experiment(domain, args):
         add_exact_inf=args.add_exact_inf,
         pinns_checkpoint=args.pinns_checkpoint,
         pinns_file=args.pinns_file,
+        npy_dir=output_dirs['npy'],
     )
     if X_train is None:
         print(f"  !! No data found for {domain} — skipping.")
@@ -356,14 +362,13 @@ def run_experiment(domain, args):
     print(f"Model: trunk={trunk}  branch={branch}  params={n_params:,}")
 
     # ---- train ---------------------------------------------------------
-    ckpt_name = f'boundary_{domain}'
     t_train_start = time.time()
     history = train_deeponet(
         model, loader, args.epochs,
         lr=args.lr, device=device,
         test_data=test_data, show_every=1,
-        checkpoint_dir=os.path.join('outputs', 'checkpoints'),
-        checkpoint_name=ckpt_name,
+        checkpoint_dir=output_dirs['checkpoints'],
+        checkpoint_name='model',
     )
     t_train = time.time() - t_train_start
     print(f"Total training time: {t_train:.2f}s")
@@ -372,15 +377,25 @@ def run_experiment(domain, args):
     test_x_500 = test_x.clone()
     test_x_500[:, p_col_idx] = 500.0 / 500.0
     model.eval()
-    if device.type == 'cuda':
-        torch.cuda.synchronize()
-    t_inf_start = time.time()
+    x_test_dev = test_x_500.to(device)
     with torch.no_grad():
-        _ = model(test_x_500.to(device))
-    if device.type == 'cuda':
-        torch.cuda.synchronize()
-    t_inf = time.time() - t_inf_start
-    print(f"Inference time (p=500, {test_x_500.shape[0]} pts): {t_inf:.4f}s")
+        for _ in range(10):
+            model(x_test_dev)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t0 = time.time()
+        for _ in range(100):
+            model(x_test_dev[:1])
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t_pt = (time.time() - t0) / 100
+        t0 = time.time()
+        for _ in range(100):
+            model(x_test_dev)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t_full = (time.time() - t0) / 100
+    print(f"Inference (per point): {t_pt:.4e}s | (full domain): {t_full:.4e}s")
 
     # ---- evaluate over p -----------------------------------------------
     ev = evaluate_over_p_range(
@@ -408,25 +423,22 @@ def run_experiment(domain, args):
             pred_train_mse.append(mse)
 
     # ---- save all MSE curves to one .npz -------------------------------
-    npy_dir = os.path.join('outputs', 'npy')
-    run_tag = determine_run_tag(args)
-
     save_mse_npz(
-        os.path.join(npy_dir, f'mse_{run_tag}_boundary_{domain}.npz'),
+        os.path.join(output_dirs['npy'], 'mse.npz'),
         deeponet=(ev['p'], ev['mse']),
         fem=(fem_p_list, fem_mse_list),
         pred_train=(pred_train_p, pred_train_mse),
     )
 
     # ---- plots ---------------------------------------------------------
-    out = os.path.join(args.output_dir, domain)
-    os.makedirs(out, exist_ok=True)
-    plot_training_history(history, f'6.3.2 {cfg["name"]}', os.path.join(out, 'training.png'))
-    plot_mse_vs_p(ev['p'], ev['mse'], f'6.3.2 {cfg["name"]}', os.path.join(out, 'mse_vs_p.png'))
+    plot_training_history(history, f'6.3.2 {cfg["name"]}',
+                          os.path.join(output_dirs['plots'], 'training.png'))
+    plot_mse_vs_p(ev['p'], ev['mse'], f'6.3.2 {cfg["name"]}',
+                  os.path.join(output_dirs['plots'], 'mse_vs_p.png'))
 
     if dim == 2:
         for pv in (200, 500):
-            _plot_2d_domain(model, domain, cfg, device, out, pv)
+            _plot_2d_domain(model, domain, cfg, device, output_dirs['plots'], pv)
 
     return model, history, ev
 
@@ -462,7 +474,7 @@ def _plot_2d_domain(model, domain, cfg, device, out_dir, p_value, n=101):
 
 def main():
     all_keys = list(ALL_DOMAINS.keys())
-    ap = argparse.ArgumentParser(description='Experiment 6.3.2: Dist-to-Boundary DeepONet')
+    ap = argparse.ArgumentParser(description='Dist-to-Boundary DeepONet')
     ap.add_argument('--domain', default='disc',
                     choices=all_keys + ['all-2d', 'all-3d', 'all'])
     ap.add_argument('--epochs', type=int, default=20)
@@ -472,7 +484,7 @@ def main():
                     help='Default for 2-D; auto-adjusted to 3 for 3-D domains')
     ap.add_argument('--branch-layers', default='1,128,128,128,128')
     ap.add_argument('--data-dir', default='./experiment_6_3_2')
-    ap.add_argument('--output-dir', default='./outputs/experiment_6_3_2')
+    ap.add_argument('--output-dir', default='outputs')
     ap.add_argument('--seed', type=int, default=1234)
     ap.add_argument('--no-exact-inf', dest='add_exact_inf', action='store_false')
     ap.add_argument('--pinns-checkpoint', default=None,

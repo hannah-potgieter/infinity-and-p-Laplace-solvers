@@ -6,7 +6,7 @@ Re-exports every public symbol so callers can do:
     from PINNs_code import BasePINN, train_pinn, ...
 """
 
-from .utils import create_output_dirs, set_seed, get_device
+from .utils import create_output_dirs, setup_logging, set_seed, get_device
 from .activations import ACTIVATIONS, get_activation
 from .schedulers import (
     FixedAlphaSchedule,

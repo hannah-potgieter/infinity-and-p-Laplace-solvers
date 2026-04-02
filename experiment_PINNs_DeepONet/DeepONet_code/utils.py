@@ -1,31 +1,54 @@
 """
-Shared utilities: output directories, reproducibility, and device selection.
+Shared utilities: output directories, reproducibility, device selection,
+and logging.
 """
 
 import os
+import sys
 import random
 import numpy as np
 import torch
 
 
+class TeeWriter:
+    """Write to both a file and the original stream (console)."""
+
+    def __init__(self, file, stream):
+        self.file = file
+        self.stream = stream
+
+    def write(self, data):
+        self.stream.write(data)
+        self.file.write(data)
+
+    def flush(self):
+        self.stream.flush()
+        self.file.flush()
+
+
 def create_output_dirs(base_dir='outputs'):
     """
-    Create output directories for plots and checkpoints.
+    Create output directories for plots, checkpoints, and npy.
 
     Returns:
-        dict with 'base', 'plots', and 'checkpoints' paths
+        dict with 'base', 'plots', 'checkpoints', and 'npy' paths.
     """
-    plots_dir = os.path.join(base_dir, 'plots')
-    checkpoints_dir = os.path.join(base_dir, 'checkpoints')
+    dirs = {'base': base_dir}
+    for sub in ('plots', 'checkpoints', 'npy'):
+        path = os.path.join(base_dir, sub)
+        os.makedirs(path, exist_ok=True)
+        dirs[sub] = path
+    return dirs
 
-    os.makedirs(plots_dir, exist_ok=True)
-    os.makedirs(checkpoints_dir, exist_ok=True)
 
-    return {
-        'base': base_dir,
-        'plots': plots_dir,
-        'checkpoints': checkpoints_dir,
-    }
+def setup_logging(base_dir):
+    """Tee stdout/stderr to both console and *base_dir*/train.log."""
+    os.makedirs(base_dir, exist_ok=True)
+    log_path = os.path.join(base_dir, 'train.log')
+    log_file = open(log_path, 'w')
+    sys.stdout = TeeWriter(log_file, sys.__stdout__)
+    sys.stderr = TeeWriter(log_file, sys.__stderr__)
+    return log_path
 
 
 def set_seed(seed=1234):

@@ -26,7 +26,7 @@ import torch.autograd as autograd
 import matplotlib.pyplot as plt
 
 from PINNs_code import (
-    BasePINN, create_output_dirs, set_seed, get_device,
+    BasePINN, create_output_dirs, setup_logging, set_seed, get_device,
     InteriorSampler, split_data, train_pinn,
     plot_results, plot_pde_loss_distribution,
     FixedAlphaSchedule, AlphaPlateauScheduler, ReLoBRaLo,
@@ -596,7 +596,7 @@ def run_example(case='boundary', domain='disc', n_epochs=100, n_interior_grid=10
                 lr=1e-3, clip_residual=0.0, outlier_percentile=1.0,
                 plot_pde_every=0, output_dir='outputs', outlier_off_epoch=None,
                 save_npy=False, ring_radius=0.01, n_ring_pts=1000,
-                positivity_weight=10.0):
+                positivity_weight=10.0, run_tag=None):
     if hidden_layers is None:
         hidden_layers = [128, 128, 128, 128]
 
@@ -609,12 +609,17 @@ def run_example(case='boundary', domain='disc', n_epochs=100, n_interior_grid=10
     else:
         example_name = f"eikonal_{domain}"
 
+    base = os.path.join(output_dir, 'expr_7_3', example_name)
+    if run_tag:
+        base = os.path.join(base, run_tag)
+    setup_logging(base)
+
     print(f"\n{'=' * 60}")
     print(f"Eikonal Equation |∇u|² = 1 ({'3D' if dim == 3 else '2D'})")
     print(f"Case: {case} | Domain: {domain}")
     print(f"{'=' * 60}\n")
 
-    output_dirs = create_output_dirs(output_dir)
+    output_dirs = create_output_dirs(base)
     f_exact = get_exact_solution(case, domain)
     bc_resample_fn = None
 
@@ -767,18 +772,17 @@ def run_example(case='boundary', domain='disc', n_epochs=100, n_interior_grid=10
         t_full = (time.time() - t0) / 100
     print(f"Inference (per point): {t_pt:.4e}s | (full domain): {t_full:.4e}s")
 
-    # Best/final predictions
     model.eval()
     with torch.no_grad():
         y_pred_best = model(x_test_dev).cpu()
-    final_ckpt_path = os.path.join(output_dirs['checkpoints'], f'final_model_{example_name}.pt')
+    final_ckpt_path = os.path.join(output_dirs['checkpoints'], 'final_model.pt')
     if os.path.exists(final_ckpt_path):
         ckpt = torch.load(final_ckpt_path, map_location=device, weights_only=False)
         model.load_state_dict(ckpt['model_state_dict'])
         model.eval()
         with torch.no_grad():
             y_pred_final = model(x_test_dev).cpu()
-        best_path = os.path.join(output_dirs['checkpoints'], f'best_model_{example_name}.pt')
+        best_path = os.path.join(output_dirs['checkpoints'], 'best_model.pt')
         if os.path.exists(best_path):
             model.load_state_dict(torch.load(best_path, map_location=device, weights_only=False)['model_state_dict'])
             model.eval()
@@ -786,31 +790,29 @@ def run_example(case='boundary', domain='disc', n_epochs=100, n_interior_grid=10
         y_pred_final = y_pred_best.clone()
 
     if save_npy:
-        npy_dir = os.path.join(output_dirs['base'], 'npy')
-        os.makedirs(npy_dir, exist_ok=True)
+        npy_dir = output_dirs['npy']
         history_data = {k: np.array([v if v is not None else np.nan for v in vals])
                         for k, vals in history.items()}
-        np.savez(os.path.join(npy_dir, f'training_history_{example_name}.npz'), **history_data)
+        np.savez(os.path.join(npy_dir, 'training_history.npz'), **history_data)
         coords = {'x': x_test[:, 0].numpy(), 'y': x_test[:, 1].numpy()}
         if dim == 3:
             coords['z'] = x_test[:, 2].numpy()
-        np.savez(os.path.join(npy_dir, f'exact_solution_{example_name}.npz'),
+        np.savez(os.path.join(npy_dir, 'exact_solution.npz'),
                  **coords, u_exact=y_test.numpy().flatten())
-        np.savez(os.path.join(npy_dir, f'predictions_{example_name}.npz'),
+        np.savez(os.path.join(npy_dir, 'predictions.npz'),
                  **coords,
                  u_pred_best=y_pred_best.numpy().flatten(),
                  u_pred_final=y_pred_final.numpy().flatten())
         print(f"Saved .npz files to {npy_dir}/")
 
-    # Plotting: 2D uses standard plot_results, 3D uses cross-section plot
     if dim == 3:
-        plot_path = os.path.join(output_dirs['plots'], f'results_{example_name}.png') if save_plots else None
+        plot_path = os.path.join(output_dirs['plots'], 'results.png') if save_plots else None
         fig = plot_3d_results(model, x_test, y_test, history, title, device=device,
                               output_path=plot_path)
     else:
         fig = plot_results(model, x_test, y_test, history, title, device=device)
         if save_plots:
-            path = os.path.join(output_dirs['plots'], f'results_{example_name}.png')
+            path = os.path.join(output_dirs['plots'], 'results.png')
             fig.savefig(path, dpi=150, bbox_inches='tight')
             print(f"Saved plot to {path}")
     plt.show()
@@ -826,7 +828,7 @@ if __name__ == '__main__':
     ALL_DOMAINS = sorted(DOMAINS_2D | DOMAINS_3D)
 
     parser = argparse.ArgumentParser(
-        description='Experiment 6.3: Eikonal Equation |nabla u|^2 = 1 (2D and 3D)',
+        description='Eikonal Equation |nabla u|^2 = 1 (2D and 3D)',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--case', type=str, default='boundary', choices=['origin', 'boundary'])
@@ -853,6 +855,8 @@ if __name__ == '__main__':
                         help='Weight for the u>=0 positivity penalty in PDE residual')
     parser.add_argument('--plot-pde-every', type=int, default=0)
     parser.add_argument('--output-dir', type=str, default='outputs')
+    parser.add_argument('--run-tag', type=str, default=None,
+                        help='Ablation tag; creates a subdirectory under the example folder')
     parser.add_argument('--no-save', action='store_true')
     parser.add_argument('--save-npy', action='store_true')
 
@@ -934,4 +938,5 @@ if __name__ == '__main__':
         outlier_off_epoch=args.outlier_off_epoch,
         save_npy=args.save_npy,
         ring_radius=args.ring_radius, n_ring_pts=args.n_ring_pts,
-        positivity_weight=args.positivity_weight)
+        positivity_weight=args.positivity_weight,
+        run_tag=args.run_tag)

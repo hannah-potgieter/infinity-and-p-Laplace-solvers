@@ -28,7 +28,7 @@ from torch.utils.data import DataLoader
 from DeepONet_code import (
     DeepONet, DeepONetDataset, load_mat_files_per_p,
     train_deeponet, evaluate_over_p_range,
-    set_seed, get_device,
+    set_seed, get_device, create_output_dirs, setup_logging,
     determine_run_tag,
     plot_training_history, plot_mse_vs_p,
     dist_to_ellipse_boundary,
@@ -242,8 +242,14 @@ def _compute_fem_mse_from(mat_path):
 # =====================================================================
 
 def run_experiment(args):
+    tag = f'total{args.total_div}'
+    run_tag = determine_run_tag(args)
+    base = os.path.join(args.output_dir, 'expr_7_3_3', tag, run_tag)
+    setup_logging(base)
+    output_dirs = create_output_dirs(base)
+
     print(f"\n{'=' * 60}")
-    print(f"Experiment 6.3.3  —  All Ellipses  —  total_div={args.total_div}")
+    print(f"All Ellipses  —  total_div={args.total_div}")
     print(f"{'=' * 60}")
 
     set_seed(args.seed)
@@ -281,15 +287,13 @@ def run_experiment(args):
     print(f"Model: trunk={trunk}  branch={branch}  params={n_params:,}")
 
     # ---- train ---------------------------------------------------------
-    tag = f'total{args.total_div}'
-    ckpt_name = f'all_ellipse_{tag}'
     t_train_start = time.time()
     history = train_deeponet(
         model, loader, args.epochs,
         lr=args.lr, device=device,
         test_data=test_data, show_every=1,
-        checkpoint_dir=os.path.join('outputs', 'checkpoints'),
-        checkpoint_name=ckpt_name,
+        checkpoint_dir=output_dirs['checkpoints'],
+        checkpoint_name='model',
     )
     t_train = time.time() - t_train_start
     print(f"Total training time: {t_train:.2f}s")
@@ -298,15 +302,25 @@ def run_experiment(args):
     test_x_500 = test_x.clone()
     test_x_500[:, 2] = 500.0 / 500.0
     model.eval()
-    if device.type == 'cuda':
-        torch.cuda.synchronize()
-    t_inf_start = time.time()
+    x_test_dev = test_x_500.to(device)
     with torch.no_grad():
-        _ = model(test_x_500.to(device))
-    if device.type == 'cuda':
-        torch.cuda.synchronize()
-    t_inf = time.time() - t_inf_start
-    print(f"Inference time (p=500, {test_x_500.shape[0]} pts): {t_inf:.4f}s")
+        for _ in range(10):
+            model(x_test_dev)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t0 = time.time()
+        for _ in range(100):
+            model(x_test_dev[:1])
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t_pt = (time.time() - t0) / 100
+        t0 = time.time()
+        for _ in range(100):
+            model(x_test_dev)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t_full = (time.time() - t0) / 100
+    print(f"Inference (per point): {t_pt:.4e}s | (full domain): {t_full:.4e}s")
 
     # ---- evaluate over p (column 2) ------------------------------------
     ev = evaluate_over_p_range(
@@ -378,9 +392,6 @@ def run_experiment(args):
         print("  [WARN] No base points found for θ-sweep (need exact_inf)")
 
     # ---- save all MSE curves to one .npz -------------------------------
-    npy_dir = os.path.join('outputs', 'npy')
-    run_tag = determine_run_tag(args)
-
     save_dict = dict(
         deeponet_p=np.array(ev['p']),
         deeponet_mse=np.array(ev['mse']),
@@ -391,21 +402,18 @@ def run_experiment(args):
         theta=np.array(theta_values),
         theta_mse=np.array(theta_mse),
     )
-    npz_path = os.path.join(npy_dir, f'mse_{run_tag}_all_ellipse_{tag}.npz')
-    os.makedirs(npy_dir, exist_ok=True)
+    npz_path = os.path.join(output_dirs['npy'], 'mse.npz')
     np.savez(npz_path, **save_dict)
     print(f"Saved MSE curves → {npz_path}")
 
     # ---- plots ---------------------------------------------------------
-    out = args.output_dir
-    os.makedirs(out, exist_ok=True)
     plot_training_history(
         history, f'6.3.3 All Ellipses ({tag})',
-        os.path.join(out, f'training_{tag}.png'),
+        os.path.join(output_dirs['plots'], 'training.png'),
     )
     plot_mse_vs_p(
         ev['p'], ev['mse'], f'6.3.3 All Ellipses ({tag})',
-        os.path.join(out, f'mse_vs_p_{tag}.png'),
+        os.path.join(output_dirs['plots'], 'mse_vs_p.png'),
     )
 
     return model, history, ev
@@ -417,7 +425,7 @@ def run_experiment(args):
 
 def main():
     ap = argparse.ArgumentParser(
-        description='Experiment 6.3.3: Dist-to-Boundary All-Ellipse DeepONet',
+        description='Dist-to-Boundary All-Ellipse DeepONet',
     )
     ap.add_argument('--epochs', type=int, default=20)
     ap.add_argument('--lr', type=float, default=1e-4)
@@ -426,7 +434,7 @@ def main():
     ap.add_argument('--branch-layers', default='4,128,128,128,128')
     ap.add_argument('--total-div', type=int, default=10)
     ap.add_argument('--data-dir', default='./experiment_6_3_3')
-    ap.add_argument('--output-dir', default='./outputs/experiment_6_3_3')
+    ap.add_argument('--output-dir', default='outputs')
     ap.add_argument('--seed', type=int, default=1234)
     ap.add_argument('--no-exact-inf', dest='add_exact_inf', action='store_false')
     ap.add_argument('--run-tag', default='auto',

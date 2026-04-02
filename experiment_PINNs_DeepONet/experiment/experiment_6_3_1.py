@@ -28,7 +28,7 @@ from DeepONet_code import (
     DeepONet, DeepONetDataset, load_mat_files_per_p,
     infer_pinns_on_grid,
     train_deeponet, evaluate_over_p_range,
-    set_seed, get_device, create_output_dirs,
+    set_seed, get_device, create_output_dirs, setup_logging,
     determine_run_tag, save_mse_npz,
     plot_training_history, plot_mse_vs_p, plot_prediction_2d,
 )
@@ -49,7 +49,7 @@ def exact_solution(x, y):
 # Data helpers
 # =====================================================================
 
-def _get_pinns_prediction(args, last_pts, domain):
+def _get_pinns_prediction(args, last_pts, domain, npy_dir=None):
     """
     Obtain PINNs prediction at p=∞ on the FEM grid.
 
@@ -59,9 +59,9 @@ def _get_pinns_prediction(args, last_pts, domain):
         3. fall back to exact closed-form solution
     """
     if args.pinns_checkpoint:
-        cache = os.path.join(
-            'outputs', 'npy', f'pinns_inf_origin_{domain}.npy',
-        )
+        cache_dir = npy_dir or 'outputs/npy'
+        os.makedirs(cache_dir, exist_ok=True)
+        cache = os.path.join(cache_dir, f'pinns_inf_origin_{domain}.npy')
         return infer_pinns_on_grid(
             args.pinns_checkpoint, last_pts, cache_path=cache,
         )
@@ -102,8 +102,13 @@ def generate_test_grid(domain, n_points=101):
 # =====================================================================
 
 def run_experiment(domain, args):
+    run_tag = determine_run_tag(args)
+    base = os.path.join(args.output_dir, 'expr_7_3_1', domain, run_tag)
+    setup_logging(base)
+    output_dirs = create_output_dirs(base)
+
     print(f"\n{'=' * 60}")
-    print(f"Experiment 6.3.1  —  Distance to Origin  —  {domain.capitalize()}")
+    print(f"Distance to Origin  —  {domain.capitalize()}")
     print(f"{'=' * 60}")
 
     set_seed(args.seed)
@@ -146,7 +151,7 @@ def run_experiment(domain, args):
         pts_norm = last_pts / 2.0 + 0.5
         p_col = np.ones((pts_norm.shape[0], 1), dtype=np.float32)
         X_inf = np.hstack([pts_norm, p_col]).astype(np.float32)
-        Y_inf = _get_pinns_prediction(args, last_pts, domain)
+        Y_inf = _get_pinns_prediction(args, last_pts, domain, npy_dir=output_dirs['npy'])
 
         sol_exact_inf = exact_solution(
             torch.tensor(last_pts[:, 0], dtype=torch.float32),
@@ -181,14 +186,13 @@ def run_experiment(domain, args):
     print(f"Model: trunk={trunk}  branch={branch}  params={n_params:,}")
 
     # ---- train ---------------------------------------------------------
-    ckpt_name = f'origin_{domain}'
     t_train_start = time.time()
     history = train_deeponet(
         model, loader, args.epochs,
         lr=args.lr, device=device,
         test_data=test_data, show_every=1,
-        checkpoint_dir=os.path.join('outputs', 'checkpoints'),
-        checkpoint_name=ckpt_name,
+        checkpoint_dir=output_dirs['checkpoints'],
+        checkpoint_name='model',
     )
     t_train = time.time() - t_train_start
     print(f"Total training time: {t_train:.2f}s")
@@ -197,15 +201,25 @@ def run_experiment(domain, args):
     test_x_500 = test_x.clone()
     test_x_500[:, 2] = 500.0 / 500.0
     model.eval()
-    if device.type == 'cuda':
-        torch.cuda.synchronize()
-    t_inf_start = time.time()
+    x_test_dev = test_x_500.to(device)
     with torch.no_grad():
-        _ = model(test_x_500.to(device))
-    if device.type == 'cuda':
-        torch.cuda.synchronize()
-    t_inf = time.time() - t_inf_start
-    print(f"Inference time (p=500, {test_x_500.shape[0]} pts): {t_inf:.4f}s")
+        for _ in range(10):
+            model(x_test_dev)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t0 = time.time()
+        for _ in range(100):
+            model(x_test_dev[:1])
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t_pt = (time.time() - t0) / 100
+        t0 = time.time()
+        for _ in range(100):
+            model(x_test_dev)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t_full = (time.time() - t0) / 100
+    print(f"Inference (per point): {t_pt:.4e}s | (full domain): {t_full:.4e}s")
 
     # ---- evaluate over p -----------------------------------------------
     ev = evaluate_over_p_range(model, test_x, test_y, device, p_col_idx=2)
@@ -230,24 +244,21 @@ def run_experiment(domain, args):
             pred_train_mse.append(mse)
 
     # ---- save all MSE curves to one .npz -------------------------------
-    npy_dir = os.path.join('outputs', 'npy')
-    run_tag = determine_run_tag(args)
-
     save_mse_npz(
-        os.path.join(npy_dir, f'mse_{run_tag}_origin_{domain}.npz'),
+        os.path.join(output_dirs['npy'], 'mse.npz'),
         deeponet=(ev['p'], ev['mse']),
         fem=(fem_p_list, fem_mse_list),
         pred_train=(pred_train_p, pred_train_mse),
     )
 
     # ---- plots ---------------------------------------------------------
-    out = os.path.join(args.output_dir, domain)
-    os.makedirs(out, exist_ok=True)
-    plot_training_history(history, f'6.3.1 {domain}', os.path.join(out, 'training.png'))
-    plot_mse_vs_p(ev['p'], ev['mse'], f'6.3.1 {domain}', os.path.join(out, 'mse_vs_p.png'))
+    plot_training_history(history, f'6.3.1 {domain}',
+                          os.path.join(output_dirs['plots'], 'training.png'))
+    plot_mse_vs_p(ev['p'], ev['mse'], f'6.3.1 {domain}',
+                  os.path.join(output_dirs['plots'], 'mse_vs_p.png'))
 
     for pv in (200, 500):
-        _plot_2d(model, domain, device, out, pv)
+        _plot_2d(model, domain, device, output_dirs['plots'], pv)
 
     return model, history, ev
 
@@ -282,7 +293,7 @@ def _plot_2d(model, domain, device, out_dir, p_value, n=101):
 # =====================================================================
 
 def main():
-    ap = argparse.ArgumentParser(description='Experiment 6.3.1: Dist-to-Origin DeepONet')
+    ap = argparse.ArgumentParser(description='Dist-to-Origin DeepONet')
     ap.add_argument('--domain', default='disc', choices=['disc', 'square', 'all'])
     ap.add_argument('--epochs', type=int, default=20)
     ap.add_argument('--lr', type=float, default=1e-4)
@@ -290,7 +301,7 @@ def main():
     ap.add_argument('--trunk-layers', default='2,512,512,512,128')
     ap.add_argument('--branch-layers', default='1,128,128,128,128')
     ap.add_argument('--data-dir', default='./experiment_6_3_1')
-    ap.add_argument('--output-dir', default='./outputs/experiment_6_3_1')
+    ap.add_argument('--output-dir', default='outputs')
     ap.add_argument('--seed', type=int, default=1234)
     ap.add_argument('--no-exact-inf', dest='add_exact_inf', action='store_false',
                     help='Do NOT append exact p=∞ point to mat-file data')

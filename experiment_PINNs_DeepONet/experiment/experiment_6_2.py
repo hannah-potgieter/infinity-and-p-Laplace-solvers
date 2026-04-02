@@ -22,7 +22,7 @@ import torch.autograd as autograd
 import matplotlib.pyplot as plt
 
 from PINNs_code import (
-    BasePINN, create_output_dirs, set_seed, get_device,
+    BasePINN, create_output_dirs, setup_logging, set_seed, get_device,
     InteriorSampler, split_data, train_pinn, train_pinn_iterative,
     plot_results, plot_pde_loss_distribution,
     generate_square_domain_data, generate_disc_domain_data,
@@ -204,15 +204,30 @@ def run_experiment(domain='square', mode='simple', p=10,
                    clip_residual=10.0, clip_grad_norm=1.0, outlier_percentile=2.0,
                    outlier_off_epoch=None, plot_pde_every=0,
                    save_npy=False, bc_loss_threshold=None, pde_loss_threshold=None,
-                   resume_checkpoint=None):
+                   resume_checkpoint=None, run_tag=None):
     if hidden_layers is None:
         hidden_layers = [128, 128, 128, 128]
 
+    if mode == 'simple':
+        example_dir = f'p{p}_{domain}'
+        expr_folder = 'expr_7_2_simple'
+    else:
+        if p_values_list is not None:
+            example_dir = f'p{p_values_list[0]}to{p_values_list[-1]}_{domain}'
+        else:
+            example_dir = f'p{p_start}to{p_end}_{domain}'
+        expr_folder = 'expr_7_2_iter'
+
+    base = os.path.join(output_dir, expr_folder, example_dir)
+    if run_tag:
+        base = os.path.join(base, run_tag)
+    setup_logging(base)
+
     print(f"\n{'=' * 60}")
-    print(f"Experiment 6.2: p-Laplacian Aronsson Example")
+    print(f"p-Laplacian Aronsson Example")
     print(f"{'=' * 60}\n")
 
-    output_dirs = create_output_dirs(output_dir)
+    output_dirs = create_output_dirs(base)
     f_exact = aronsson_solution
 
     if domain == 'square':
@@ -347,29 +362,27 @@ def run_experiment(domain='square', mode='simple', p=10,
     print(f"Inf-Lap PDE test (raw):                    {model.loss_pde_infinity(x_test_dev).item():.4e}")
     print(f"Inf-Lap PDE test (normalized):             {model.loss_pde_infinity_normalized(x_test_dev).item():.4e}")
 
-    # Save npy
     if save_npy:
-        npy_dir = os.path.join(output_dirs['base'], 'npy')
-        os.makedirs(npy_dir, exist_ok=True)
+        npy_dir = output_dirs['npy']
         history_data = {}
         for k, vals in history.items():
             if k == 'p_schedule':
                 history_data[k] = np.array(vals)
                 continue
             history_data[k] = np.array([v if v is not None else np.nan for v in vals])
-        np.savez(os.path.join(npy_dir, f'training_history_{example_name}.npz'), **history_data)
+        np.savez(os.path.join(npy_dir, 'training_history.npz'), **history_data)
         model.eval()
         with torch.no_grad():
             y_pred = model(x_test_dev).cpu()
-        np.savez(os.path.join(npy_dir, f'exact_solution_{example_name}.npz'),
+        np.savez(os.path.join(npy_dir, 'exact_solution.npz'),
                  x=x_test[:, 0].numpy(), y=x_test[:, 1].numpy(),
                  u_exact=y_test.numpy().flatten())
-        np.savez(os.path.join(npy_dir, f'predictions_{example_name}.npz'),
+        np.savez(os.path.join(npy_dir, 'predictions.npz'),
                  x=x_test[:, 0].numpy(), y=x_test[:, 1].numpy(),
                  u_pred=y_pred.numpy().flatten())
         print(f"Saved .npz files to {npy_dir}/")
 
-    plot_path = os.path.join(output_dirs['plots'], f'results_{example_name}.png')
+    plot_path = os.path.join(output_dirs['plots'], 'results.png')
     fig = plot_results(model, x_test, y_test, history, title, output_path=plot_path, device=device)
     plt.show()
 
@@ -382,7 +395,7 @@ def run_experiment(domain='square', mode='simple', p=10,
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Experiment 6.2: p-Laplacian Aronsson Example with PINNs',
+        description='p-Laplacian Aronsson Example with PINNs',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--domain', type=str, default='square', choices=['square', 'disc'])
@@ -434,6 +447,8 @@ if __name__ == '__main__':
     parser.add_argument('--scheduler-end-factor', type=float, default=0.01)
     parser.add_argument('--plot-pde-every', type=int, default=0)
     parser.add_argument('--output-dir', type=str, default='outputs')
+    parser.add_argument('--run-tag', type=str, default=None,
+                        help='Ablation tag; creates a subdirectory under the example folder')
     parser.add_argument('--save-npy', action='store_true')
     parser.add_argument('--resume-checkpoint', type=str, default=None)
 
@@ -488,4 +503,5 @@ if __name__ == '__main__':
         plot_pde_every=args.plot_pde_every, save_npy=args.save_npy,
         bc_loss_threshold=args.bc_loss_threshold,
         pde_loss_threshold=args.pde_loss_threshold,
-        resume_checkpoint=args.resume_checkpoint)
+        resume_checkpoint=args.resume_checkpoint,
+        run_tag=args.run_tag)
