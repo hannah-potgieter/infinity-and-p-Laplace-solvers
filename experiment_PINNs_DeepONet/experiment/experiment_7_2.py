@@ -425,7 +425,7 @@ if __name__ == '__main__':
     parser.add_argument('--outlier-off-epoch', type=int, default=None)
 
     parser.add_argument('--alpha', type=float, default=None)
-    parser.add_argument('--alpha-schedule', type=str, default='auto',
+    parser.add_argument('--alpha-schedule', type=str, default=None,
                         help='"auto", "relobralo", or "epoch:value,..."')
     parser.add_argument('--alpha-min', type=float, default=1e-5)
     parser.add_argument('--alpha-max', type=float, default=1e-1)
