@@ -107,7 +107,7 @@ bash train_expr_7_3_1.sh          # pinns_inf + no_inf modes (4 runs)
 
 | Domain | MSE at p=500 (without \(u_\infty\)) | MSE at p=500 (with \(u_\infty\)) |
 |--------|--------------------------------------|-----------------------------------|
-| Square | 5.527e-04 | **5.999e-07** |
+| Square | 5.527e-04 | **7.148e-07** |
 | Disc | 3.549e-03 | **2.872e-06** |
 
 ### 7.3.2 — Distance-to-Boundary (DeepONet, 2D and 3D)
