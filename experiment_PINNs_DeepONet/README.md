@@ -37,10 +37,18 @@ experiment_PINNs_DeepONet/
 │   ├── experiment_7_3_2.py  #   Distance-to-boundary (DeepONet, 2D + 3D)
 │   └── experiment_7_3_3.py  #   All-ellipse generalization (DeepONet)
 │
+├── plot/                    # Plotting scripts (read from outputs/, save to outputs/images/)
+│   ├── experiment_7_1_plot.py    #   Loss, approximation, exact solution plots
+│   ├── experiment_7_2_plot.py    #   MSE vs p (iterative training)
+│   ├── experiment_7_3_plot.py    #   MSE vs p for 7.3.1 (origin) and 7.3.2 (boundary)
+│   └── experiment_7_3_3_plot.py  #   MSE vs θ and MSE vs (a,b) heatmap
+│
 ├── train_expr_7_1.sh              # Normal training for 7.1
 ├── train_expr_7_1_ablation.sh     # Ablation studies for 7.1
-├── train_expr_7_2_simple.sh       # Simple p-Laplacian training
-├── train_expr_7_2_iterative.sh    # Iterative p-Laplacian training
+├── train_expr_7_2_simple.sh              # Simple p-Laplacian training
+├── train_expr_7_2_simple_ablation.sh     # Ablation studies for 7.2 simple training
+├── train_expr_7_2_iterative.sh           # Iterative p-Laplacian training
+├── train_expr_7_2_iterative_ablation.sh  # Ablation studies for 7.2 iterative training
 ├── train_expr_7_3_pinns.sh        # Eikonal PINNs (prerequisite for DeepONet)
 ├── train_expr_7_3_1.sh            # Distance-to-origin DeepONet
 ├── train_expr_7_3_2.sh            # Distance-to-boundary DeepONet
@@ -57,6 +65,23 @@ Solves the homogeneous infinity Laplacian \(\Delta_\infty u = 0\) on 2D domains 
 ```bash
 bash train_expr_7_1.sh            # normal training (5 examples)
 ```
+
+**Plotting:**
+
+```bash
+python plot/experiment_7_1_plot.py                          # all examples
+python plot/experiment_7_1_plot.py --example arctan         # single example
+python plot/experiment_7_1_plot.py --example absolute --run-tag normal
+```
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--example` | `all` | `arctan`, `absolute`, `absolute_dd`, `aronsson_square`, `aronsson_disc`, or `all` |
+| `--run-tag` | `normal` | Run tag subdirectory |
+| `--base-dir` | `outputs/expr_7_1` | Base directory for experiment outputs |
+| `--out-dir` | `outputs/images` | Directory to save figures |
+
+Generates loss curves, approximation, and exact solution plots for each example.
 
 | Example | Domain | PINNs MSE | Newton FEM MSE | Inference Time |
 |---------|--------|-----------|----------------|----------------|
@@ -76,6 +101,21 @@ Solves \(\Delta_p u = 0\) for \(p = 2\) to \(1000\) on \([-1,1]^2\) (Aronsson ex
 bash train_expr_7_2_simple.sh     # independent training per p (13 values)
 bash train_expr_7_2_iterative.sh  # 5-band continuation pipeline
 ```
+
+**Plotting:**
+
+```bash
+python plot/experiment_7_2_plot.py                    # square domain (default)
+python plot/experiment_7_2_plot.py --domain disc
+```
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--domain` | `square` | `square` or `disc` |
+| `--base-dir` | `outputs/expr_7_2_iter` | Base directory for iterative outputs |
+| `--out-dir` | `outputs/images` | Directory to save figures |
+
+Generates MSE vs p plot from iterative training histories.
 
 **Simple training** (independent per p): becomes unstable beyond \(p \approx 10\).
 
@@ -97,6 +137,8 @@ bash train_expr_7_3_pinns.sh  # 10 domains (prerequisite for 7.3.1 and 7.3.2)
 
 **Domains:** square, disc, 3 ellipses (2D); sphere, cylinder, torus (3D).
 
+*Plotting for 7.3 PINNs outputs is handled by the downstream DeepONet experiment plot scripts (7.3.1, 7.3.2, 7.3.3).*
+
 ### 7.3.1 — Distance-to-Origin (DeepONet)
 
 Learns the operator mapping \(p \mapsto u_p\) for the distance-to-origin problem. Including the PINNs-predicted \(p = \infty\) solution in training dramatically improves extrapolation.
@@ -104,6 +146,22 @@ Learns the operator mapping \(p \mapsto u_p\) for the distance-to-origin problem
 ```bash
 bash train_expr_7_3_1.sh          # pinns_inf + no_inf modes (4 runs)
 ```
+
+**Plotting:**
+
+```bash
+python plot/experiment_7_3_plot.py --type origin                 # all domains
+python plot/experiment_7_3_plot.py --type origin --domain disc   # single domain
+```
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--type` | *(required)* | `origin` for 7.3.1, `boundary` for 7.3.2 |
+| `--domain` | `all` | Domain name or `all` |
+| `--base-dir` | `None` | Auto-resolved: `outputs/expr_7_3_1` for origin |
+| `--out-dir` | `outputs/images` | Directory to save figures |
+
+Generates MSE vs p plots comparing FEM, DeepONet (with/without \(u_\infty\)).
 
 | Domain | MSE at p=500 (without \(u_\infty\)) | MSE at p=500 (with \(u_\infty\)) |
 |--------|--------------------------------------|-----------------------------------|
@@ -118,10 +176,21 @@ Learns the distance-to-boundary operator across 7 domains. A single DeepONet rep
 bash train_expr_7_3_2.sh          # pinns_inf mode (7 runs)
 ```
 
+**Plotting:**
+
+```bash
+python plot/experiment_7_3_plot.py --type boundary                   # all domains
+python plot/experiment_7_3_plot.py --type boundary --domain ellipse1  # single domain
+```
+
+Uses the same `experiment_7_3_plot.py` script with `--type boundary`. See 7.3.1 above for full argument list.
+
 | Domain | DeepONet MSE | Inference Time | Newton FEM Time |
 |--------|-------------|----------------|-----------------|
-| 2D disc | 5.452e-06 | 4.568e-04 s | 8,667 s |
-| Ellipse 1 | 1.062e-05 | 3.505e-04 s | ~3.5 hours |
+| 2D disc | 5.489e-06 | 4.568e-04 s | 8,667 s |
+| Ellipse 1 | 1.279e-05 | 3.505e-04 s | ~3.5 hours |
+| Ellipse 2 | 1.085e-05 | 3.705e-04 s | |
+| Ellipse 3 | 4.348e-06 | 3.521e-04 s | |
 | 3D sphere | 6.037e-06 | 2.974e-03 s | ~5 days |
 | 3D cylinder | 5.119e-05 | 4.559e-03 s | ~5 days |
 | 3D torus | 3.640e-05 | 8.593e-04 s | ~5 days |
@@ -135,6 +204,22 @@ Learns a single model over a parametric family of ellipses (semi-axes \(a, b\) a
 ```bash
 bash train_expr_7_3_3.sh  # 5 total_div values
 ```
+
+**Plotting:**
+
+```bash
+python plot/experiment_7_3_3_plot.py                       # all total_div values
+python plot/experiment_7_3_3_plot.py --total-div 10        # single total_div
+```
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--total-div` | `all` | `total_div` value or `all` (loops over 10, 8, 6, 4, 2) |
+| `--run-tag` | `exact_inf` | Run tag subdirectory |
+| `--base-dir` | `outputs/expr_7_3_3` | Base directory for experiment outputs |
+| `--out-dir` | `outputs/images` | Directory to save figures |
+
+Generates MSE vs θ line plots (all `total_div`) and MSE vs (a,b) heatmap (`total_div=10` only).
 
 ## Output Directory Structure
 
@@ -233,12 +318,12 @@ The `--run-tag` argument controls the subdirectory name for ablation variants. A
 | `--hidden-layers` | str | `128,128,128,128` | Comma-separated layer widths |
 | `--activation` | str | `tanh` | Activation function |
 | `--eta` | float | `1e-5` | Eta-normalization constant |
-| `--clip-residual` | float | `10.0` | Residual clipping threshold |
+| `--clip-residual` | float | `100.0` | Residual clipping threshold |
 | `--clip-grad-norm` | float | `1.0` | Gradient norm clipping |
 | `--outlier-percentile` | float | `2.0` | Outlier removal percentile |
 | `--outlier-off-epoch` | int | `None` | Epoch to stop outlier removal |
 | `--alpha` | float | `None` | Fixed PDE loss weight |
-| `--alpha-schedule` | str | `auto` | Alpha schedule strategy |
+| `--alpha-schedule` | str | `None` | Alpha schedule strategy |
 | `--bc-loss-threshold` | float | `None` | Early stopping BC loss threshold (iterative) |
 | `--pde-loss-threshold` | float | `None` | Early stopping PDE loss threshold (iterative) |
 | `--resume-checkpoint` | str | `None` | Path to checkpoint for resuming iterative training |
