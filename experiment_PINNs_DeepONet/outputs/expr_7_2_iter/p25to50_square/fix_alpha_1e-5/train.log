@@ -1,0 +1,229 @@
+
+============================================================
+p-Laplacian Aronsson Example
+============================================================
+
+Generated full domain data:
+  Boundary points: 40,000
+  Interior points: 1,000,000
+  Test points: 10,000
+Re-sampling enabled: ~1,000,000 interior points per epoch
+
+Splitting data: 80% train, 20% validation
+  BC: 32,000 train, 8,000 val
+  Interior: 800,000 train, 200,000 val
+
+Loading checkpoint: outputs/expr_7_2_iter/p2to20_square/fix_alpha_1e-5/checkpoints/best_model_p20.pt
+
+Model: PLaplacianPINN on Square [-1,1]²
+  Hidden layers: [128, 128, 128, 128], activation: tanh
+  η=1e-05, clip_residual=100.0, clip_grad_norm=1.0
+  Outlier removal: top 2.0%
+  Parameters: 50,049
+
+Iterative Training Schedule:
+  p values: [25, 30, 40, 50]
+  Epochs per p: 20
+
+
+============================================================
+Stage 1/4: Training with p=25
+============================================================
+
+Training configuration:
+  Boundary points (train): 32,000 -> 80 batches of 400
+  Interior points (train): 1,000,000 -> 1000 batches of 1000
+  Interior sampling: RE-SAMPLE each epoch
+  Boundary points (val): 8,000
+  Validation loss: BC only
+  Steps per epoch: 1,000
+  Total steps: 20,000
+  Epochs: 20
+  Loss balancing: FixedAlphaSchedule
+  LR scheduler: None (constant LR=1.0e-05)
+
+/usr/local/lib/python3.12/dist-packages/torch/autograd/graph.py:824: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:181.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Epoch   1/20 | Steps:   1000 | α=1e-05 | Loss: 6.1551e-06 | BC: 5.5219e-06 | PDE: 6.3318e-02 | Val: 4.1627e-06 | Test: 2.0901e-05 |  *
+Epoch   2/20 | Steps:   2000 | α=1e-05 | Loss: 4.1531e-06 | BC: 3.3521e-06 | PDE: 8.0102e-02 | Val: 2.8196e-06 | Test: 1.8842e-05 |  *
+Epoch   3/20 | Steps:   3000 | α=1e-05 | Loss: 3.2453e-06 | BC: 2.4290e-06 | PDE: 8.1630e-02 | Val: 2.2170e-06 | Test: 1.8303e-05 |  *
+Epoch   4/20 | Steps:   4000 | α=1e-05 | Loss: 2.6178e-06 | BC: 1.8520e-06 | PDE: 7.6582e-02 | Val: 1.7472e-06 | Test: 1.8211e-05 |  *
+Epoch   5/20 | Steps:   5000 | α=1e-05 | Loss: 2.2282e-06 | BC: 1.4499e-06 | PDE: 7.7833e-02 | Val: 1.3448e-06 | Test: 1.7322e-05 |  *
+Epoch   6/20 | Steps:   6000 | α=1e-05 | Loss: 1.9424e-06 | BC: 1.1706e-06 | PDE: 7.7175e-02 | Val: 1.1460e-06 | Test: 1.7133e-05 |  *
+Epoch   7/20 | Steps:   7000 | α=1e-05 | Loss: 1.7435e-06 | BC: 9.8077e-07 | PDE: 7.6273e-02 | Val: 9.5645e-07 | Test: 1.6501e-05 |  *
+Epoch   8/20 | Steps:   8000 | α=1e-05 | Loss: 1.5967e-06 | BC: 8.6081e-07 | PDE: 7.3592e-02 | Val: 8.4766e-07 | Test: 1.6376e-05 |  *
+Epoch   9/20 | Steps:   9000 | α=1e-05 | Loss: 1.4491e-06 | BC: 7.4715e-07 | PDE: 7.0195e-02 | Val: 7.8194e-07 | Test: 1.6248e-05 |  *
+Epoch  10/20 | Steps:  10000 | α=1e-05 | Loss: 1.3468e-06 | BC: 6.6333e-07 | PDE: 6.8345e-02 | Val: 6.6597e-07 | Test: 1.6178e-05 |  *
+Epoch  11/20 | Steps:  11000 | α=1e-05 | Loss: 1.2429e-06 | BC: 6.0166e-07 | PDE: 6.4123e-02 | Val: 6.1063e-07 | Test: 1.6133e-05 |  *
+Epoch  12/20 | Steps:  12000 | α=1e-05 | Loss: 1.1741e-06 | BC: 5.5322e-07 | PDE: 6.2088e-02 | Val: 7.0051e-07 | Test: 1.6060e-05 | 
+Epoch  13/20 | Steps:  13000 | α=1e-05 | Loss: 1.1011e-06 | BC: 5.1179e-07 | PDE: 5.8927e-02 | Val: 5.6111e-07 | Test: 1.5821e-05 |  *
+Epoch  14/20 | Steps:  14000 | α=1e-05 | Loss: 1.0594e-06 | BC: 4.8859e-07 | PDE: 5.7080e-02 | Val: 5.1121e-07 | Test: 1.5361e-05 |  *
+Epoch  15/20 | Steps:  15000 | α=1e-05 | Loss: 1.0226e-06 | BC: 4.6562e-07 | PDE: 5.5696e-02 | Val: 5.0398e-07 | Test: 1.5391e-05 |  *
+Epoch  16/20 | Steps:  16000 | α=1e-05 | Loss: 9.8840e-07 | BC: 4.5658e-07 | PDE: 5.3183e-02 | Val: 5.5606e-07 | Test: 1.5650e-05 | 
+Epoch  17/20 | Steps:  17000 | α=1e-05 | Loss: 9.4104e-07 | BC: 4.3531e-07 | PDE: 5.0573e-02 | Val: 5.1068e-07 | Test: 1.5261e-05 | 
+Epoch  18/20 | Steps:  18000 | α=1e-05 | Loss: 9.0827e-07 | BC: 4.1765e-07 | PDE: 4.9061e-02 | Val: 5.0807e-07 | Test: 1.5529e-05 | 
+Epoch  19/20 | Steps:  19000 | α=1e-05 | Loss: 8.7421e-07 | BC: 4.0992e-07 | PDE: 4.6428e-02 | Val: 4.2257e-07 | Test: 1.5166e-05 |  *
+Epoch  20/20 | Steps:  20000 | α=1e-05 | Loss: 8.7193e-07 | BC: 4.0280e-07 | PDE: 4.6913e-02 | Val: 4.2569e-07 | Test: 1.5246e-05 | 
+
+Restored best model from epoch 19 (val_loss: 4.2257e-07, test_loss: 1.5166e-05)
+Best checkpoint saved to: outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/checkpoints/best_model.pt
+Final checkpoint saved to: outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/checkpoints/final_model.pt
+Training completed in 190.55s (20,000 total steps)
+  Stage 1 (p=25) PDE diagnostics:
+    p-Lap (p=25) raw:        1.9327e+08
+    p-Lap (p=25) normalized: 9.0874e-03
+    Inf-Lap raw:              2.4919e-02
+    Inf-Lap normalized:       3.1170e-02
+
+============================================================
+Stage 2/4: Training with p=30
+============================================================
+
+Training configuration:
+  Boundary points (train): 32,000 -> 80 batches of 400
+  Interior points (train): 1,000,000 -> 1000 batches of 1000
+  Interior sampling: RE-SAMPLE each epoch
+  Boundary points (val): 8,000
+  Validation loss: BC only
+  Steps per epoch: 1,000
+  Total steps: 20,000
+  Epochs: 20
+  Loss balancing: FixedAlphaSchedule
+  LR scheduler: None (constant LR=1.0e-05)
+
+Epoch   1/20 | Steps:   1000 | α=1e-05 | Loss: 1.0428e-06 | BC: 4.1771e-07 | PDE: 6.2512e-02 | Val: 4.9864e-07 | Test: 1.1989e-05 |  *
+Epoch   2/20 | Steps:   2000 | α=1e-05 | Loss: 9.5136e-07 | BC: 4.2573e-07 | PDE: 5.2563e-02 | Val: 5.2802e-07 | Test: 1.1949e-05 | 
+Epoch   3/20 | Steps:   3000 | α=1e-05 | Loss: 9.1728e-07 | BC: 4.2589e-07 | PDE: 4.9139e-02 | Val: 4.6174e-07 | Test: 1.1864e-05 |  *
+Epoch   4/20 | Steps:   4000 | α=1e-05 | Loss: 9.0988e-07 | BC: 4.2471e-07 | PDE: 4.8517e-02 | Val: 4.6374e-07 | Test: 1.1839e-05 | 
+Epoch   5/20 | Steps:   5000 | α=1e-05 | Loss: 8.7868e-07 | BC: 4.2130e-07 | PDE: 4.5739e-02 | Val: 4.6356e-07 | Test: 1.1531e-05 | 
+Epoch   6/20 | Steps:   6000 | α=1e-05 | Loss: 8.5128e-07 | BC: 4.1264e-07 | PDE: 4.3863e-02 | Val: 4.4276e-07 | Test: 1.1815e-05 |  *
+Epoch   7/20 | Steps:   7000 | α=1e-05 | Loss: 8.3653e-07 | BC: 4.0060e-07 | PDE: 4.3594e-02 | Val: 4.6085e-07 | Test: 1.1909e-05 | 
+Epoch   8/20 | Steps:   8000 | α=1e-05 | Loss: 8.1291e-07 | BC: 3.9367e-07 | PDE: 4.1924e-02 | Val: 4.4248e-07 | Test: 1.1716e-05 |  *
+Epoch   9/20 | Steps:   9000 | α=1e-05 | Loss: 8.0299e-07 | BC: 3.8999e-07 | PDE: 4.1300e-02 | Val: 3.9701e-07 | Test: 1.1675e-05 |  *
+Epoch  10/20 | Steps:  10000 | α=1e-05 | Loss: 7.8700e-07 | BC: 3.8291e-07 | PDE: 4.0410e-02 | Val: 3.9900e-07 | Test: 1.1581e-05 | 
+Epoch  11/20 | Steps:  11000 | α=1e-05 | Loss: 7.7625e-07 | BC: 3.7864e-07 | PDE: 3.9761e-02 | Val: 3.9303e-07 | Test: 1.1465e-05 |  *
+Epoch  12/20 | Steps:  12000 | α=1e-05 | Loss: 7.6481e-07 | BC: 3.7248e-07 | PDE: 3.9233e-02 | Val: 4.1461e-07 | Test: 1.1702e-05 | 
+Epoch  13/20 | Steps:  13000 | α=1e-05 | Loss: 7.4895e-07 | BC: 3.6738e-07 | PDE: 3.8157e-02 | Val: 3.7430e-07 | Test: 1.1488e-05 |  *
+Epoch  14/20 | Steps:  14000 | α=1e-05 | Loss: 7.3091e-07 | BC: 3.5937e-07 | PDE: 3.7154e-02 | Val: 3.7067e-07 | Test: 1.1377e-05 |  *
+Epoch  15/20 | Steps:  15000 | α=1e-05 | Loss: 7.2864e-07 | BC: 3.5510e-07 | PDE: 3.7354e-02 | Val: 3.8448e-07 | Test: 1.1306e-05 | 
+Epoch  16/20 | Steps:  16000 | α=1e-05 | Loss: 7.2044e-07 | BC: 3.5025e-07 | PDE: 3.7019e-02 | Val: 3.9601e-07 | Test: 1.1156e-05 | 
+Epoch  17/20 | Steps:  17000 | α=1e-05 | Loss: 6.9809e-07 | BC: 3.4091e-07 | PDE: 3.5718e-02 | Val: 3.9543e-07 | Test: 1.1301e-05 | 
+Epoch  18/20 | Steps:  18000 | α=1e-05 | Loss: 7.0400e-07 | BC: 3.3591e-07 | PDE: 3.6809e-02 | Val: 3.9432e-07 | Test: 1.1516e-05 | 
+Epoch  19/20 | Steps:  19000 | α=1e-05 | Loss: 6.8384e-07 | BC: 3.2984e-07 | PDE: 3.5399e-02 | Val: 3.5110e-07 | Test: 1.1247e-05 |  *
+Epoch  20/20 | Steps:  20000 | α=1e-05 | Loss: 6.7655e-07 | BC: 3.2763e-07 | PDE: 3.4892e-02 | Val: 3.7122e-07 | Test: 1.1022e-05 | 
+
+Restored best model from epoch 19 (val_loss: 3.5110e-07, test_loss: 1.1247e-05)
+Best checkpoint saved to: outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/checkpoints/best_model.pt
+Final checkpoint saved to: outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/checkpoints/final_model.pt
+Training completed in 220.66s (20,000 total steps)
+  Stage 2 (p=30) PDE diagnostics:
+    p-Lap (p=30) raw:        6.2621e+10
+    p-Lap (p=30) normalized: 7.2616e-03
+    Inf-Lap raw:              1.9232e-02
+    Inf-Lap normalized:       2.3376e-02
+
+============================================================
+Stage 3/4: Training with p=40
+============================================================
+
+Training configuration:
+  Boundary points (train): 32,000 -> 80 batches of 400
+  Interior points (train): 1,000,000 -> 1000 batches of 1000
+  Interior sampling: RE-SAMPLE each epoch
+  Boundary points (val): 8,000
+  Validation loss: BC only
+  Steps per epoch: 1,000
+  Total steps: 20,000
+  Epochs: 20
+  Loss balancing: FixedAlphaSchedule
+  LR scheduler: None (constant LR=1.0e-05)
+
+Epoch   1/20 | Steps:   1000 | α=1e-05 | Loss: 1.0852e-06 | BC: 3.5389e-07 | PDE: 7.3127e-02 | Val: 3.6731e-07 | Test: 7.9642e-06 |  *
+Epoch   2/20 | Steps:   2000 | α=1e-05 | Loss: 9.2692e-07 | BC: 3.4603e-07 | PDE: 5.8089e-02 | Val: 3.7687e-07 | Test: 7.7669e-06 | 
+Epoch   3/20 | Steps:   3000 | α=1e-05 | Loss: 8.9653e-07 | BC: 3.5448e-07 | PDE: 5.4205e-02 | Val: 3.7871e-07 | Test: 7.5570e-06 | 
+Epoch   4/20 | Steps:   4000 | α=1e-05 | Loss: 9.0181e-07 | BC: 3.5979e-07 | PDE: 5.4201e-02 | Val: 3.9945e-07 | Test: 8.0477e-06 | 
+Epoch   5/20 | Steps:   5000 | α=1e-05 | Loss: 8.5417e-07 | BC: 3.5825e-07 | PDE: 4.9592e-02 | Val: 3.8924e-07 | Test: 7.6946e-06 | 
+Epoch   6/20 | Steps:   6000 | α=1e-05 | Loss: 8.6887e-07 | BC: 3.6107e-07 | PDE: 5.0780e-02 | Val: 3.8351e-07 | Test: 7.9009e-06 | 
+Epoch   7/20 | Steps:   7000 | α=1e-05 | Loss: 8.5254e-07 | BC: 3.5756e-07 | PDE: 4.9499e-02 | Val: 4.1400e-07 | Test: 7.7701e-06 | 
+Epoch   8/20 | Steps:   8000 | α=1e-05 | Loss: 8.3566e-07 | BC: 3.5575e-07 | PDE: 4.7991e-02 | Val: 3.7785e-07 | Test: 7.7899e-06 | 
+Epoch   9/20 | Steps:   9000 | α=1e-05 | Loss: 8.2964e-07 | BC: 3.5815e-07 | PDE: 4.7149e-02 | Val: 3.6762e-07 | Test: 7.7093e-06 | 
+Epoch  10/20 | Steps:  10000 | α=1e-05 | Loss: 8.1148e-07 | BC: 3.4909e-07 | PDE: 4.6240e-02 | Val: 3.6092e-07 | Test: 7.7756e-06 |  *
+Epoch  11/20 | Steps:  11000 | α=1e-05 | Loss: 8.0335e-07 | BC: 3.5205e-07 | PDE: 4.5129e-02 | Val: 3.7906e-07 | Test: 7.8879e-06 | 
+Epoch  12/20 | Steps:  12000 | α=1e-05 | Loss: 7.8701e-07 | BC: 3.4430e-07 | PDE: 4.4271e-02 | Val: 3.8024e-07 | Test: 7.9772e-06 | 
+Epoch  13/20 | Steps:  13000 | α=1e-05 | Loss: 7.7762e-07 | BC: 3.4506e-07 | PDE: 4.3256e-02 | Val: 4.3054e-07 | Test: 7.5582e-06 | 
+Epoch  14/20 | Steps:  14000 | α=1e-05 | Loss: 7.8302e-07 | BC: 3.4755e-07 | PDE: 4.3547e-02 | Val: 3.5253e-07 | Test: 7.6177e-06 |  *
+Epoch  15/20 | Steps:  15000 | α=1e-05 | Loss: 7.5708e-07 | BC: 3.4133e-07 | PDE: 4.1575e-02 | Val: 3.8325e-07 | Test: 7.4479e-06 | 
+Epoch  16/20 | Steps:  16000 | α=1e-05 | Loss: 7.6035e-07 | BC: 3.3854e-07 | PDE: 4.2181e-02 | Val: 4.4649e-07 | Test: 7.6560e-06 | 
+Epoch  17/20 | Steps:  17000 | α=1e-05 | Loss: 7.3961e-07 | BC: 3.3577e-07 | PDE: 4.0383e-02 | Val: 3.8389e-07 | Test: 7.6649e-06 | 
+Epoch  18/20 | Steps:  18000 | α=1e-05 | Loss: 7.3038e-07 | BC: 3.3004e-07 | PDE: 4.0034e-02 | Val: 4.3528e-07 | Test: 7.7590e-06 | 
+Epoch  19/20 | Steps:  19000 | α=1e-05 | Loss: 7.3067e-07 | BC: 3.2816e-07 | PDE: 4.0251e-02 | Val: 4.3477e-07 | Test: 7.8294e-06 | 
+Epoch  20/20 | Steps:  20000 | α=1e-05 | Loss: 7.1916e-07 | BC: 3.2600e-07 | PDE: 3.9316e-02 | Val: 3.6451e-07 | Test: 7.5147e-06 | 
+
+Restored best model from epoch 14 (val_loss: 3.5253e-07, test_loss: 7.6177e-06)
+Best checkpoint saved to: outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/checkpoints/best_model.pt
+Final checkpoint saved to: outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/checkpoints/final_model.pt
+Training completed in 200.03s (20,000 total steps)
+  Stage 3 (p=40) PDE diagnostics:
+    p-Lap (p=40) raw:        1.9211e+16
+    p-Lap (p=40) normalized: 7.0790e-03
+    Inf-Lap raw:              1.3823e-02
+    Inf-Lap normalized:       1.8352e-02
+
+============================================================
+Stage 4/4: Training with p=50
+============================================================
+
+Training configuration:
+  Boundary points (train): 32,000 -> 80 batches of 400
+  Interior points (train): 1,000,000 -> 1000 batches of 1000
+  Interior sampling: RE-SAMPLE each epoch
+  Boundary points (val): 8,000
+  Validation loss: BC only
+  Steps per epoch: 1,000
+  Total steps: 20,000
+  Epochs: 20
+  Loss balancing: FixedAlphaSchedule
+  LR scheduler: None (constant LR=1.0e-05)
+
+Epoch   1/20 | Steps:   1000 | α=1e-05 | Loss: 1.1079e-06 | BC: 3.4356e-07 | PDE: 7.6439e-02 | Val: 4.1182e-07 | Test: 5.7460e-06 |  *
+Epoch   2/20 | Steps:   2000 | α=1e-05 | Loss: 9.8854e-07 | BC: 3.4715e-07 | PDE: 6.4140e-02 | Val: 3.7817e-07 | Test: 5.7817e-06 |  *
+Epoch   3/20 | Steps:   3000 | α=1e-05 | Loss: 9.9075e-07 | BC: 3.4915e-07 | PDE: 6.4160e-02 | Val: 4.1494e-07 | Test: 5.8198e-06 | 
+Epoch   4/20 | Steps:   4000 | α=1e-05 | Loss: 9.7033e-07 | BC: 3.5567e-07 | PDE: 6.1466e-02 | Val: 4.2344e-07 | Test: 6.1145e-06 | 
+Epoch   5/20 | Steps:   5000 | α=1e-05 | Loss: 9.5458e-07 | BC: 3.5665e-07 | PDE: 5.9793e-02 | Val: 3.9589e-07 | Test: 5.8169e-06 | 
+Epoch   6/20 | Steps:   6000 | α=1e-05 | Loss: 9.4816e-07 | BC: 3.5644e-07 | PDE: 5.9172e-02 | Val: 3.8814e-07 | Test: 5.7747e-06 | 
+Epoch   7/20 | Steps:   7000 | α=1e-05 | Loss: 9.5173e-07 | BC: 3.5662e-07 | PDE: 5.9511e-02 | Val: 3.6799e-07 | Test: 5.7445e-06 |  *
+Epoch   8/20 | Steps:   8000 | α=1e-05 | Loss: 9.0836e-07 | BC: 3.5387e-07 | PDE: 5.5449e-02 | Val: 3.7811e-07 | Test: 5.9438e-06 | 
+Epoch   9/20 | Steps:   9000 | α=1e-05 | Loss: 9.1834e-07 | BC: 3.5910e-07 | PDE: 5.5924e-02 | Val: 3.8545e-07 | Test: 5.8794e-06 | 
+Epoch  10/20 | Steps:  10000 | α=1e-05 | Loss: 8.8168e-07 | BC: 3.4775e-07 | PDE: 5.3394e-02 | Val: 3.7797e-07 | Test: 5.9130e-06 | 
+Epoch  11/20 | Steps:  11000 | α=1e-05 | Loss: 8.8597e-07 | BC: 3.5569e-07 | PDE: 5.3028e-02 | Val: 3.7604e-07 | Test: 5.6762e-06 | 
+Epoch  12/20 | Steps:  12000 | α=1e-05 | Loss: 8.5913e-07 | BC: 3.4816e-07 | PDE: 5.1097e-02 | Val: 4.2065e-07 | Test: 6.0385e-06 | 
+Epoch  13/20 | Steps:  13000 | α=1e-05 | Loss: 8.3247e-07 | BC: 3.5277e-07 | PDE: 4.7970e-02 | Val: 3.8989e-07 | Test: 5.7984e-06 | 
+Epoch  14/20 | Steps:  14000 | α=1e-05 | Loss: 8.7627e-07 | BC: 3.5446e-07 | PDE: 5.2181e-02 | Val: 3.7846e-07 | Test: 5.6783e-06 | 
+Epoch  15/20 | Steps:  15000 | α=1e-05 | Loss: 8.4742e-07 | BC: 3.5133e-07 | PDE: 4.9609e-02 | Val: 3.9369e-07 | Test: 5.5534e-06 | 
+Epoch  16/20 | Steps:  16000 | α=1e-05 | Loss: 8.2933e-07 | BC: 3.4648e-07 | PDE: 4.8285e-02 | Val: 3.9429e-07 | Test: 5.7262e-06 | 
+Epoch  17/20 | Steps:  17000 | α=1e-05 | Loss: 8.1816e-07 | BC: 3.4648e-07 | PDE: 4.7168e-02 | Val: 4.2492e-07 | Test: 5.7814e-06 | 
+Epoch  18/20 | Steps:  18000 | α=1e-05 | Loss: 8.2096e-07 | BC: 3.4733e-07 | PDE: 4.7363e-02 | Val: 5.1147e-07 | Test: 5.9659e-06 | 
+Epoch  19/20 | Steps:  19000 | α=1e-05 | Loss: 8.0782e-07 | BC: 3.4217e-07 | PDE: 4.6565e-02 | Val: 4.7533e-07 | Test: 5.7097e-06 | 
+Epoch  20/20 | Steps:  20000 | α=1e-05 | Loss: 7.9753e-07 | BC: 3.4209e-07 | PDE: 4.5545e-02 | Val: 3.6805e-07 | Test: 5.6911e-06 | 
+
+Restored best model from epoch 7 (val_loss: 3.6799e-07, test_loss: 5.7445e-06)
+Best checkpoint saved to: outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/checkpoints/best_model.pt
+Final checkpoint saved to: outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/checkpoints/final_model.pt
+Training completed in 181.20s (20,000 total steps)
+  Stage 4 (p=50) PDE diagnostics:
+    p-Lap (p=50) raw:        6.6702e+21
+    p-Lap (p=50) normalized: 6.6138e-03
+    Inf-Lap raw:              1.1048e-02
+    Inf-Lap normalized:       1.5288e-02
+
+Iterative training completed in 792.44s
+Total epochs: 80
+
+Final Test MSE: 5.6911e-06
+Inference (per point): 7.8700e-05s | (full domain): 7.8020e-05s
+p-Lap (p=50) PDE test (raw):        6.6702e+21
+p-Lap (p=50) PDE test (normalized): 6.6138e-03
+Inf-Lap PDE test (raw):                    1.1048e-02
+Inf-Lap PDE test (normalized):             1.5288e-02
+Saved .npz files to outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/npy/
+Saved plot to outputs/expr_7_2_iter/p25to50_square/fix_alpha_1e-5/plots/results.png

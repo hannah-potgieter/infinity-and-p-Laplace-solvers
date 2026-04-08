@@ -1,0 +1,153 @@
+
+============================================================
+Running Example: absolute
+============================================================
+
+Generated full domain data:
+  Boundary points: 40,000
+  Interior points: 1,000,000
+  Test points: 10,000
+Re-sampling enabled: ~1,000,000 interior points per epoch
+
+Splitting data: 80% train, 20% validation
+  BC: 32,000 train, 8,000 val
+  Interior: 800,000 train, 200,000 val
+
+Model: DomainDecompositionPINN
+  Hidden layers: [32, 32, 32, 32]
+  Activation: tanh
+  Residual clipping: [-10.0, 10.0]
+  Outlier removal: top 2.0%
+  Parameters: 13,188
+
+Training configuration:
+  Boundary points (train): 32,000 -> 80 batches of 400
+  Interior points (train): 1,000,000 -> 1000 batches of 1000
+  Interior sampling: RE-SAMPLE each epoch
+  Boundary points (val): 8,000
+  Validation loss: BC only
+  Steps per epoch: 1,000
+  Total steps: 100,000
+  Epochs: 100
+  Loss balancing: AlphaPlateauScheduler
+  LR scheduler: cosine (LR: 1.0e-03 -> 1.0e-05)
+
+/usr/local/lib/python3.12/dist-packages/torch/autograd/graph.py:824: UserWarning: Attempting to run cuBLAS, but there was no current CUDA context! Attempting to set the primary context... (Triggered internally at /opt/pytorch/pytorch/aten/src/ATen/cuda/CublasHandlePool.cpp:181.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Epoch   1/100 | Steps:   1000 | α=1e-05 | Loss: 3.6467e-03 | BC: 3.4215e-03 | PDE: 9.2978e-01 | Intf: 2.1586e-04 | Val: 4.7753e-05 | Test: 8.1810e-04 | LR=1.0e-03 *
+Epoch   2/100 | Steps:   2000 | α=1e-05 | Loss: 2.6566e-04 | BC: 1.5230e-04 | PDE: 9.1793e-01 | Intf: 1.0418e-04 | Val: 3.6075e-04 | Test: 1.0427e-03 | LR=1.0e-03
+Epoch   3/100 | Steps:   3000 | α=1e-05 | Loss: 2.3718e-04 | BC: 1.3879e-04 | PDE: 8.9267e-01 | Intf: 8.9464e-05 | Val: 6.6349e-05 | Test: 7.1775e-04 | LR=1.0e-03
+Epoch   4/100 | Steps:   4000 | α=1e-05 | Loss: 2.5789e-04 | BC: 1.3275e-04 | PDE: 8.6735e-01 | Intf: 1.1648e-04 | Val: 1.0765e-04 | Test: 7.0353e-04 | LR=1.0e-03
+Epoch   5/100 | Steps:   5000 | α=1e-05 | Loss: 2.2052e-04 | BC: 1.1856e-04 | PDE: 8.4800e-01 | Intf: 9.3486e-05 | Val: 5.4627e-05 | Test: 5.8284e-04 | LR=1.0e-03
+Epoch   6/100 | Steps:   6000 | α=1e-05 | Loss: 2.0378e-04 | BC: 1.0829e-04 | PDE: 8.3591e-01 | Intf: 8.7133e-05 | Val: 4.4108e-05 | Test: 5.5560e-04 | LR=9.9e-04 *
+Epoch   7/100 | Steps:   7000 | α=1e-05 | Loss: 1.9299e-04 | BC: 1.0379e-04 | PDE: 8.3260e-01 | Intf: 8.0878e-05 | Val: 6.8697e-05 | Test: 5.8492e-04 | LR=9.9e-04
+Epoch   8/100 | Steps:   8000 | α=1e-05 | Loss: 1.9585e-04 | BC: 1.2225e-04 | PDE: 8.3947e-01 | Intf: 6.5205e-05 | Val: 1.5080e-04 | Test: 6.3838e-04 | LR=9.9e-04
+Epoch   9/100 | Steps:   9000 | α=1e-05 | Loss: 2.7259e-04 | BC: 1.3875e-04 | PDE: 8.4782e-01 | Intf: 1.2536e-04 | Val: 2.7485e-05 | Test: 5.4287e-04 | LR=9.8e-04 *
+Epoch  10/100 | Steps:  10000 | α=1e-05 | Loss: 1.0974e-04 | BC: 7.3726e-05 | PDE: 8.3461e-01 | Intf: 2.7663e-05 | Val: 3.1198e-05 | Test: 5.5631e-04 | LR=9.8e-04
+Epoch  11/100 | Steps:  11000 | α=1e-05 | Loss: 1.5289e-04 | BC: 8.8359e-05 | PDE: 8.4012e-01 | Intf: 5.6134e-05 | Val: 1.9249e-04 | Test: 6.4712e-04 | LR=9.8e-04
+Epoch  12/100 | Steps:  12000 | α=1e-05 | Loss: 1.5536e-04 | BC: 8.1352e-05 | PDE: 8.3497e-01 | Intf: 6.5661e-05 | Val: 6.0233e-05 | Test: 5.5044e-04 | LR=9.7e-04
+Epoch  13/100 | Steps:  13000 | α=1e-05 | Loss: 2.4379e-04 | BC: 1.2783e-04 | PDE: 8.4067e-01 | Intf: 1.0755e-04 | Val: 1.9425e-05 | Test: 5.3098e-04 | LR=9.7e-04 *
+Epoch  14/100 | Steps:  14000 | α=1e-05 | Loss: 6.7816e-05 | BC: 4.6603e-05 | PDE: 8.2048e-01 | Intf: 1.3008e-05 | Val: 8.7875e-05 | Test: 5.6515e-04 | LR=9.6e-04
+Epoch  15/100 | Steps:  15000 | α=1e-05 | Loss: 1.4015e-04 | BC: 7.7038e-05 | PDE: 8.3066e-01 | Intf: 5.4804e-05 | Val: 2.7526e-05 | Test: 5.4228e-04 | LR=9.5e-04
+Epoch  16/100 | Steps:  16000 | α=1e-05 | Loss: 1.4968e-04 | BC: 8.9274e-05 | PDE: 8.2708e-01 | Intf: 5.2137e-05 | Val: 1.7742e-05 | Test: 5.2892e-04 | LR=9.5e-04 *
+Epoch  17/100 | Steps:  17000 | α=1e-05 | Loss: 1.1190e-04 | BC: 6.5779e-05 | PDE: 8.2046e-01 | Intf: 3.7920e-05 | Val: 1.1361e-04 | Test: 5.6746e-04 | LR=9.4e-04
+Epoch  18/100 | Steps:  18000 | α=1e-05 | Loss: 1.5605e-04 | BC: 7.9162e-05 | PDE: 8.2785e-01 | Intf: 6.8615e-05 | Val: 2.0442e-05 | Test: 5.3979e-04 | LR=9.3e-04
+
+>>> Alpha increased: 1e-05 → 1e-04 (BC=6.2706e-05) <<<
+Epoch  19/100 | Steps:  19000 | α=1e-04 | Loss: 1.0351e-04 | BC: 6.2706e-05 | PDE: 8.0446e-01 | Intf: 3.2764e-05 | Val: 4.9355e-05 | Test: 5.4205e-04 | LR=9.2e-04 *
+Epoch  20/100 | Steps:  20000 | α=1e-04 | Loss: 1.8669e-04 | BC: 7.1172e-05 | PDE: 7.0467e-01 | Intf: 4.5049e-05 | Val: 9.3031e-05 | Test: 4.8622e-04 | LR=9.1e-04
+Epoch  21/100 | Steps:  21000 | α=1e-04 | Loss: 1.8589e-04 | BC: 7.8288e-05 | PDE: 6.0618e-01 | Intf: 4.6982e-05 | Val: 6.2176e-05 | Test: 4.0827e-04 | LR=9.1e-04
+Epoch  22/100 | Steps:  22000 | α=1e-04 | Loss: 1.6159e-04 | BC: 6.8044e-05 | PDE: 5.4399e-01 | Intf: 3.9152e-05 | Val: 1.9891e-04 | Test: 4.4856e-04 | LR=9.0e-04
+Epoch  23/100 | Steps:  23000 | α=1e-04 | Loss: 1.5823e-04 | BC: 6.5515e-05 | PDE: 4.9614e-01 | Intf: 4.3104e-05 | Val: 4.2039e-05 | Test: 3.3559e-04 | LR=8.9e-04 *
+Epoch  24/100 | Steps:  24000 | α=1e-04 | Loss: 1.4043e-04 | BC: 5.7858e-05 | PDE: 4.5758e-01 | Intf: 3.6813e-05 | Val: 6.7570e-05 | Test: 3.2374e-04 | LR=8.8e-04
+Epoch  25/100 | Steps:  25000 | α=1e-04 | Loss: 1.8431e-04 | BC: 6.8255e-05 | PDE: 4.3926e-01 | Intf: 7.2125e-05 | Val: 1.0612e-05 | Test: 2.7573e-04 | LR=8.7e-04 *
+Epoch  26/100 | Steps:  26000 | α=1e-04 | Loss: 1.2905e-04 | BC: 6.1890e-05 | PDE: 4.0395e-01 | Intf: 2.6768e-05 | Val: 7.0057e-05 | Test: 2.9967e-04 | LR=8.6e-04
+
+>>> Alpha increased: 1e-04 → 1e-03 (BC=5.7081e-05) <<<
+Epoch  27/100 | Steps:  27000 | α=1e-03 | Loss: 1.2996e-04 | BC: 5.7081e-05 | PDE: 3.8515e-01 | Intf: 3.4362e-05 | Val: 2.3218e-05 | Test: 2.4882e-04 | LR=8.4e-04 *
+Epoch  28/100 | Steps:  28000 | α=1e-03 | Loss: 4.2709e-04 | BC: 1.0866e-04 | PDE: 2.6507e-01 | Intf: 5.3356e-05 | Val: 1.3667e-05 | Test: 1.5141e-04 | LR=8.3e-04 *
+Epoch  29/100 | Steps:  29000 | α=1e-03 | Loss: 3.0330e-04 | BC: 7.9682e-05 | PDE: 1.8069e-01 | Intf: 4.2934e-05 | Val: 7.4772e-05 | Test: 1.7677e-04 | LR=8.2e-04
+Epoch  30/100 | Steps:  30000 | α=1e-03 | Loss: 2.6463e-04 | BC: 8.1926e-05 | PDE: 1.4292e-01 | Intf: 3.9777e-05 | Val: 1.0850e-04 | Test: 1.8056e-04 | LR=8.1e-04
+Epoch  31/100 | Steps:  31000 | α=1e-03 | Loss: 2.8210e-04 | BC: 1.0257e-04 | PDE: 1.2098e-01 | Intf: 5.8560e-05 | Val: 1.6725e-04 | Test: 1.7886e-04 | LR=8.0e-04
+Epoch  32/100 | Steps:  32000 | α=1e-03 | Loss: 1.8835e-04 | BC: 6.0917e-05 | PDE: 1.0686e-01 | Intf: 2.0571e-05 | Val: 7.9958e-05 | Test: 1.4441e-04 | LR=7.8e-04
+Epoch  33/100 | Steps:  33000 | α=1e-03 | Loss: 2.1945e-04 | BC: 8.7770e-05 | PDE: 9.6058e-02 | Intf: 3.5626e-05 | Val: 3.7096e-05 | Test: 9.8986e-05 | LR=7.7e-04
+Epoch  34/100 | Steps:  34000 | α=1e-03 | Loss: 4.9975e-04 | BC: 2.8841e-04 | PDE: 9.2658e-02 | Intf: 1.1868e-04 | Val: 3.1057e-06 | Test: 6.5195e-05 | LR=7.6e-04 *
+Epoch  35/100 | Steps:  35000 | α=1e-03 | Loss: 1.9167e-04 | BC: 5.3609e-05 | PDE: 1.0003e-01 | Intf: 3.8034e-05 | Val: 5.2170e-05 | Test: 8.2675e-05 | LR=7.4e-04
+Epoch  36/100 | Steps:  36000 | α=1e-03 | Loss: 2.5516e-04 | BC: 8.8168e-05 | PDE: 9.4821e-02 | Intf: 7.2170e-05 | Val: 1.2128e-05 | Test: 6.1306e-05 | LR=7.3e-04
+
+>>> Alpha increased: 1e-03 → 1e-02 (BC=8.5137e-05) <<<
+Epoch  37/100 | Steps:  37000 | α=1e-02 | Loss: 2.4429e-04 | BC: 8.5137e-05 | PDE: 9.0972e-02 | Intf: 6.8178e-05 | Val: 1.5428e-04 | Test: 1.5889e-04 | LR=7.2e-04 *
+Epoch  38/100 | Steps:  38000 | α=1e-02 | Loss: 9.9802e-04 | BC: 2.7474e-04 | PDE: 5.5322e-02 | Intf: 1.7006e-04 | Val: 5.5175e-04 | Test: 4.1600e-04 | LR=7.0e-04
+Epoch  39/100 | Steps:  39000 | α=1e-02 | Loss: 5.9721e-04 | BC: 1.7570e-04 | PDE: 2.7558e-02 | Intf: 1.4593e-04 | Val: 4.5166e-04 | Test: 3.7877e-04 | LR=6.9e-04
+Epoch  40/100 | Steps:  40000 | α=1e-02 | Loss: 4.7030e-04 | BC: 1.5235e-04 | PDE: 1.8132e-02 | Intf: 1.3664e-04 | Val: 3.2292e-04 | Test: 2.7673e-04 | LR=6.7e-04
+Epoch  41/100 | Steps:  41000 | α=1e-02 | Loss: 3.8037e-04 | BC: 1.2920e-04 | PDE: 1.3099e-02 | Intf: 1.2018e-04 | Val: 2.6308e-04 | Test: 2.0920e-04 | LR=6.6e-04
+Epoch  42/100 | Steps:  42000 | α=1e-02 | Loss: 3.4448e-04 | BC: 1.1945e-04 | PDE: 1.0949e-02 | Intf: 1.1554e-04 | Val: 2.4831e-04 | Test: 2.0653e-04 | LR=6.4e-04
+Epoch  43/100 | Steps:  43000 | α=1e-02 | Loss: 3.2636e-04 | BC: 1.2027e-04 | PDE: 9.1480e-03 | Intf: 1.1461e-04 | Val: 2.3609e-04 | Test: 1.8577e-04 | LR=6.3e-04
+Epoch  44/100 | Steps:  44000 | α=1e-02 | Loss: 3.0800e-04 | BC: 1.2478e-04 | PDE: 7.6114e-03 | Intf: 1.0711e-04 | Val: 2.4849e-04 | Test: 1.9242e-04 | LR=6.1e-04
+Epoch  45/100 | Steps:  45000 | α=1e-02 | Loss: 2.6467e-04 | BC: 9.7700e-05 | PDE: 6.9076e-03 | Intf: 9.7890e-05 | Val: 2.2960e-04 | Test: 1.8576e-04 | LR=6.0e-04
+Epoch  46/100 | Steps:  46000 | α=1e-02 | Loss: 2.6433e-04 | BC: 1.0161e-04 | PDE: 6.1503e-03 | Intf: 1.0121e-04 | Val: 4.2843e-04 | Test: 3.3835e-04 | LR=5.8e-04
+Epoch  47/100 | Steps:  47000 | α=1e-02 | Loss: 2.2170e-04 | BC: 8.1215e-05 | PDE: 5.6760e-03 | Intf: 8.3723e-05 | Val: 1.6740e-04 | Test: 1.3297e-04 | LR=5.7e-04
+Epoch  48/100 | Steps:  48000 | α=1e-02 | Loss: 2.2236e-04 | BC: 8.5475e-05 | PDE: 5.3403e-03 | Intf: 8.3476e-05 | Val: 4.9500e-05 | Test: 3.8750e-05 | LR=5.5e-04 *
+Epoch  49/100 | Steps:  49000 | α=1e-02 | Loss: 2.0455e-04 | BC: 7.5606e-05 | PDE: 5.0364e-03 | Intf: 7.8582e-05 | Val: 1.3765e-04 | Test: 1.1715e-04 | LR=5.4e-04
+Epoch  50/100 | Steps:  50000 | α=1e-02 | Loss: 1.8797e-04 | BC: 6.9151e-05 | PDE: 4.7157e-03 | Intf: 7.1661e-05 | Val: 1.4927e-04 | Test: 1.2421e-04 | LR=5.2e-04
+Epoch  51/100 | Steps:  51000 | α=1e-02 | Loss: 1.9163e-04 | BC: 7.6549e-05 | PDE: 4.5095e-03 | Intf: 6.9987e-05 | Val: 1.7327e-04 | Test: 1.5069e-04 | LR=5.1e-04
+Epoch  52/100 | Steps:  52000 | α=1e-02 | Loss: 1.6921e-04 | BC: 6.1159e-05 | PDE: 4.2519e-03 | Intf: 6.5528e-05 | Val: 8.0520e-05 | Test: 6.9625e-05 | LR=4.9e-04
+Epoch  53/100 | Steps:  53000 | α=1e-02 | Loss: 1.5198e-04 | BC: 5.4852e-05 | PDE: 3.9744e-03 | Intf: 5.7388e-05 | Val: 3.7223e-05 | Test: 3.0470e-05 | LR=4.7e-04 *
+Epoch  54/100 | Steps:  54000 | α=1e-02 | Loss: 1.5837e-04 | BC: 5.9004e-05 | PDE: 3.7919e-03 | Intf: 6.1450e-05 | Val: 6.3204e-05 | Test: 4.8714e-05 | LR=4.6e-04
+Epoch  55/100 | Steps:  55000 | α=1e-02 | Loss: 1.4244e-04 | BC: 5.1741e-05 | PDE: 3.5510e-03 | Intf: 5.5186e-05 | Val: 2.5852e-04 | Test: 2.1829e-04 | LR=4.4e-04
+Epoch  56/100 | Steps:  56000 | α=1e-02 | Loss: 1.2874e-04 | BC: 4.5920e-05 | PDE: 3.3508e-03 | Intf: 4.9312e-05 | Val: 1.2716e-05 | Test: 1.4350e-05 | LR=4.3e-04 *
+Epoch  57/100 | Steps:  57000 | α=1e-02 | Loss: 1.1966e-04 | BC: 4.2415e-05 | PDE: 3.1314e-03 | Intf: 4.5934e-05 | Val: 1.1530e-04 | Test: 9.4898e-05 | LR=4.1e-04
+Epoch  58/100 | Steps:  58000 | α=1e-02 | Loss: 1.1267e-04 | BC: 3.9947e-05 | PDE: 2.9483e-03 | Intf: 4.3235e-05 | Val: 4.0778e-05 | Test: 3.2361e-05 | LR=4.0e-04
+Epoch  59/100 | Steps:  59000 | α=1e-02 | Loss: 1.1277e-04 | BC: 4.0511e-05 | PDE: 2.7907e-03 | Intf: 4.4351e-05 | Val: 4.4569e-05 | Test: 3.8149e-05 | LR=3.8e-04
+Epoch  60/100 | Steps:  60000 | α=1e-02 | Loss: 1.0082e-04 | BC: 3.6423e-05 | PDE: 2.6338e-03 | Intf: 3.8057e-05 | Val: 1.4720e-04 | Test: 1.2660e-04 | LR=3.7e-04
+Epoch  61/100 | Steps:  61000 | α=1e-02 | Loss: 8.5734e-05 | BC: 2.9608e-05 | PDE: 2.5181e-03 | Intf: 3.0946e-05 | Val: 5.7799e-05 | Test: 4.8535e-05 | LR=3.5e-04
+Epoch  62/100 | Steps:  62000 | α=1e-02 | Loss: 9.3307e-05 | BC: 3.3064e-05 | PDE: 2.3902e-03 | Intf: 3.6340e-05 | Val: 2.1435e-05 | Test: 1.9357e-05 | LR=3.4e-04
+Epoch  63/100 | Steps:  63000 | α=1e-02 | Loss: 7.6349e-05 | BC: 2.5361e-05 | PDE: 2.2809e-03 | Intf: 2.8179e-05 | Val: 3.4629e-05 | Test: 3.2341e-05 | LR=3.2e-04
+Epoch  64/100 | Steps:  64000 | α=1e-02 | Loss: 7.7040e-05 | BC: 2.6746e-05 | PDE: 2.1837e-03 | Intf: 2.8457e-05 | Val: 1.5472e-05 | Test: 1.6235e-05 | LR=3.1e-04
+Epoch  65/100 | Steps:  65000 | α=1e-02 | Loss: 6.6677e-05 | BC: 2.2611e-05 | PDE: 2.0775e-03 | Intf: 2.3291e-05 | Val: 7.9840e-06 | Test: 1.0265e-05 | LR=2.9e-04 *
+Epoch  66/100 | Steps:  66000 | α=1e-02 | Loss: 6.6361e-05 | BC: 2.2040e-05 | PDE: 1.9890e-03 | Intf: 2.4431e-05 | Val: 1.9658e-04 | Test: 1.5839e-04 | LR=2.8e-04
+Epoch  67/100 | Steps:  67000 | α=1e-02 | Loss: 5.8094e-05 | BC: 1.8518e-05 | PDE: 1.9001e-03 | Intf: 2.0574e-05 | Val: 3.0963e-05 | Test: 2.8530e-05 | LR=2.7e-04
+Epoch  68/100 | Steps:  68000 | α=1e-02 | Loss: 5.2776e-05 | BC: 1.6699e-05 | PDE: 1.8157e-03 | Intf: 1.7920e-05 | Val: 1.1066e-04 | Test: 9.2123e-05 | LR=2.5e-04
+Epoch  69/100 | Steps:  69000 | α=1e-02 | Loss: 4.8692e-05 | BC: 1.4846e-05 | PDE: 1.7412e-03 | Intf: 1.6433e-05 | Val: 1.1926e-05 | Test: 1.0264e-05 | LR=2.4e-04
+Epoch  70/100 | Steps:  70000 | α=1e-02 | Loss: 4.4530e-05 | BC: 1.3355e-05 | PDE: 1.6448e-03 | Intf: 1.4726e-05 | Val: 1.9522e-05 | Test: 1.8638e-05 | LR=2.3e-04
+Epoch  71/100 | Steps:  71000 | α=1e-02 | Loss: 4.4802e-05 | BC: 1.3778e-05 | PDE: 1.5815e-03 | Intf: 1.5209e-05 | Val: 5.0106e-05 | Test: 3.7839e-05 | LR=2.1e-04
+Epoch  72/100 | Steps:  72000 | α=1e-02 | Loss: 3.7508e-05 | BC: 1.0956e-05 | PDE: 1.5053e-03 | Intf: 1.1498e-05 | Val: 5.5083e-06 | Test: 5.5167e-06 | LR=2.0e-04 *
+Epoch  73/100 | Steps:  73000 | α=1e-02 | Loss: 3.6236e-05 | BC: 1.0391e-05 | PDE: 1.4433e-03 | Intf: 1.1411e-05 | Val: 2.8500e-06 | Test: 5.0596e-06 | LR=1.9e-04 *
+Epoch  74/100 | Steps:  74000 | α=1e-02 | Loss: 3.0545e-05 | BC: 8.1225e-06 | PDE: 1.3691e-03 | Intf: 8.7317e-06 | Val: 1.4651e-06 | Test: 2.7937e-06 | LR=1.8e-04 *
+Epoch  75/100 | Steps:  75000 | α=1e-02 | Loss: 3.1291e-05 | BC: 8.7463e-06 | PDE: 1.3099e-03 | Intf: 9.4458e-06 | Val: 5.5003e-06 | Test: 6.3100e-06 | LR=1.7e-04
+Epoch  76/100 | Steps:  76000 | α=1e-02 | Loss: 2.7171e-05 | BC: 7.0154e-06 | PDE: 1.2498e-03 | Intf: 7.6573e-06 | Val: 7.1762e-06 | Test: 6.2062e-06 | LR=1.5e-04
+Epoch  77/100 | Steps:  77000 | α=1e-02 | Loss: 2.7607e-05 | BC: 7.6646e-06 | PDE: 1.1859e-03 | Intf: 8.0837e-06 | Val: 1.2217e-06 | Test: 3.2677e-06 | LR=1.4e-04 *
+Epoch  78/100 | Steps:  78000 | α=1e-02 | Loss: 2.1960e-05 | BC: 5.2320e-06 | PDE: 1.1363e-03 | Intf: 5.3645e-06 | Val: 4.6853e-07 | Test: 2.7218e-06 | LR=1.3e-04 *
+Epoch  79/100 | Steps:  79000 | α=1e-02 | Loss: 1.9561e-05 | BC: 4.3144e-06 | PDE: 1.0821e-03 | Intf: 4.4261e-06 | Val: 1.0877e-06 | Test: 3.2045e-06 | LR=1.2e-04
+Epoch  80/100 | Steps:  80000 | α=1e-02 | Loss: 1.9271e-05 | BC: 4.3050e-06 | PDE: 1.0330e-03 | Intf: 4.6366e-06 | Val: 7.0313e-07 | Test: 2.7048e-06 | LR=1.1e-04
+Epoch  81/100 | Steps:  81000 | α=1e-02 | Loss: 1.6455e-05 | BC: 3.2543e-06 | PDE: 9.8822e-04 | Intf: 3.3183e-06 | Val: 3.6925e-07 | Test: 2.4569e-06 | LR=1.0e-04 *
+Epoch  82/100 | Steps:  82000 | α=1e-02 | Loss: 1.7212e-05 | BC: 3.9276e-06 | PDE: 9.4004e-04 | Intf: 3.8840e-06 | Val: 4.2836e-07 | Test: 2.9106e-06 | LR=9.6e-05
+Epoch  83/100 | Steps:  83000 | α=1e-02 | Loss: 1.2970e-05 | BC: 1.9750e-06 | PDE: 9.0018e-04 | Intf: 1.9932e-06 | Val: 2.5221e-06 | Test: 3.1976e-06 | LR=8.7e-05
+Epoch  84/100 | Steps:  84000 | α=1e-02 | Loss: 1.3654e-05 | BC: 2.5551e-06 | PDE: 8.5574e-04 | Intf: 2.5411e-06 | Val: 1.0985e-05 | Test: 1.0934e-05 | LR=7.9e-05
+Epoch  85/100 | Steps:  85000 | α=1e-02 | Loss: 1.1667e-05 | BC: 1.7359e-06 | PDE: 8.1995e-04 | Intf: 1.7320e-06 | Val: 3.9663e-07 | Test: 1.9107e-06 | LR=7.1e-05
+Epoch  86/100 | Steps:  86000 | α=1e-02 | Loss: 1.0787e-05 | BC: 1.5708e-06 | PDE: 7.7731e-04 | Intf: 1.4436e-06 | Val: 2.8072e-07 | Test: 2.0386e-06 | LR=6.4e-05 *
+Epoch  87/100 | Steps:  87000 | α=1e-02 | Loss: 9.9279e-06 | BC: 1.2817e-06 | PDE: 7.4258e-04 | Intf: 1.2204e-06 | Val: 1.6507e-06 | Test: 2.8322e-06 | LR=5.7e-05
+Epoch  88/100 | Steps:  88000 | α=1e-02 | Loss: 9.5145e-06 | BC: 1.2888e-06 | PDE: 7.0244e-04 | Intf: 1.2012e-06 | Val: 6.2921e-07 | Test: 2.1031e-06 | LR=5.1e-05
+Epoch  89/100 | Steps:  89000 | α=1e-02 | Loss: 8.5749e-06 | BC: 9.8835e-07 | PDE: 6.6617e-04 | Intf: 9.2490e-07 | Val: 2.5003e-07 | Test: 1.6637e-06 | LR=4.5e-05 *
+Epoch  90/100 | Steps:  90000 | α=1e-02 | Loss: 7.6791e-06 | BC: 7.4604e-07 | PDE: 6.3255e-04 | Intf: 6.0750e-07 | Val: 2.7473e-07 | Test: 1.6235e-06 | LR=3.9e-05
+Epoch  91/100 | Steps:  91000 | α=1e-02 | Loss: 7.3462e-06 | BC: 6.9199e-07 | PDE: 6.0075e-04 | Intf: 6.4674e-07 | Val: 2.7593e-06 | Test: 3.6708e-06 | LR=3.4e-05
+Epoch  92/100 | Steps:  92000 | α=1e-02 | Loss: 6.7253e-06 | BC: 5.7517e-07 | PDE: 5.6538e-04 | Intf: 4.9627e-07 | Val: 2.9205e-07 | Test: 1.5149e-06 | LR=3.0e-05
+Epoch  93/100 | Steps:  93000 | α=1e-02 | Loss: 5.9616e-06 | BC: 3.3347e-07 | PDE: 5.3426e-04 | Intf: 2.8553e-07 | Val: 2.4594e-07 | Test: 1.5672e-06 | LR=2.6e-05 *
+Epoch  94/100 | Steps:  94000 | α=1e-02 | Loss: 5.8709e-06 | BC: 4.5015e-07 | PDE: 5.0431e-04 | Intf: 3.7767e-07 | Val: 3.7630e-07 | Test: 1.5670e-06 | LR=2.2e-05
+Epoch  95/100 | Steps:  95000 | α=1e-02 | Loss: 5.1530e-06 | BC: 2.1802e-07 | PDE: 4.7367e-04 | Intf: 1.9824e-07 | Val: 1.3225e-07 | Test: 1.3207e-06 | LR=1.9e-05 *
+Epoch  96/100 | Steps:  96000 | α=1e-02 | Loss: 5.0052e-06 | BC: 3.0007e-07 | PDE: 4.4571e-04 | Intf: 2.4803e-07 | Val: 3.6032e-07 | Test: 1.5243e-06 | LR=1.6e-05
+Epoch  97/100 | Steps:  97000 | α=1e-02 | Loss: 4.6083e-06 | BC: 2.3535e-07 | PDE: 4.1881e-04 | Intf: 1.8482e-07 | Val: 7.5276e-07 | Test: 1.7672e-06 | LR=1.4e-05
+Epoch  98/100 | Steps:  98000 | α=1e-02 | Loss: 4.3556e-06 | BC: 2.0339e-07 | PDE: 3.9798e-04 | Intf: 1.7241e-07 | Val: 1.4216e-07 | Test: 1.4205e-06 | LR=1.2e-05
+Epoch  99/100 | Steps:  99000 | α=1e-02 | Loss: 4.1456e-06 | BC: 2.2680e-07 | PDE: 3.7374e-04 | Intf: 1.8143e-07 | Val: 1.5470e-07 | Test: 1.3978e-06 | LR=1.1e-05
+
+>>> Alpha increased: 1e-02 → 1e-01 (BC=1.9235e-07) <<<
+Epoch 100/100 | Steps: 100000 | α=1e-01 | Loss: 3.8707e-06 | BC: 1.9235e-07 | PDE: 3.5228e-04 | Intf: 1.5549e-07 | Val: 1.2520e-07 | Test: 1.4896e-06 | LR=1.0e-05 *
+
+Restored best model from epoch 100 (val_loss: 1.2520e-07, test_loss: 1.4896e-06)
+Best checkpoint saved to: outputs/expr_7_1/absolute_dd/eta0/checkpoints/best_model.pt
+Final checkpoint saved to: outputs/expr_7_1/absolute_dd/eta0/checkpoints/final_model.pt
+Training completed in 3560.19s (100,000 total steps)
+
+Final Test MSE: 1.4896e-06
+Inference (per point): 5.0931e-04s | (full domain): 1.2714e-03s
+Saved plot to outputs/expr_7_1/absolute_dd/eta0/plots/results.png
