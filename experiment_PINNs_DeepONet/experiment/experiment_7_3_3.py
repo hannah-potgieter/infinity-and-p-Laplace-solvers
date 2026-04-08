@@ -352,8 +352,7 @@ def run_experiment(args):
                 pred_train_p.append(p)
                 pred_train_mse.append(mse)
 
-    # ---- 4D sweep: MSE(p, a, b, θ) ----------------------------------------
-    sweep_p_values = np.array([200, 300, 400, 450, 495, 500])
+    # ---- 3D sweep: MSE(θ, a, b) at p=500  (eqs. mse_ijk/mse_theta/mse_ab) --
     n_ab = 21
     n_theta_steps = 101
     a_param_grid = np.linspace(0, 1, n_ab)
@@ -370,44 +369,69 @@ def run_experiment(args):
         (np.abs(X_train[:, 5] - base_b) < 1e-6)
     )
     x_base = X_train[base_mask]
-    n_p, n_a, n_b, n_t = len(sweep_p_values), n_ab, n_ab, n_theta_steps
-    mse_4d = np.full((n_p, n_a, n_b, n_t), np.nan)
+    N = x_base.shape[0]
+    mse_3d = np.full((n_theta_steps, n_ab, n_ab), np.nan)
 
-    print(f"4D sweep: {n_p}×{n_a}×{n_b}×{n_t} = {n_p*n_a*n_b*n_t:,} evaluations, "
-          f"{x_base.shape[0]} base pts")
+    print(f"MSE(θ,a,b) sweep at p=500: {n_theta_steps}×{n_ab}×{n_ab} = "
+          f"{n_theta_steps*n_ab*n_ab:,} evals, {N} base pts")
 
-    if x_base.shape[0] > 0:
+    if N > 0:
+        x0 = (x_base[:, 0] - 0.5) * 2.0
+        y0 = (x_base[:, 1] - 0.5) * 2.0
+        x0_t = torch.tensor(x0.astype(np.float32))
+        y0_t = torch.tensor(y0.astype(np.float32))
+
         model.eval()
         with torch.no_grad():
-            for pi, p_val in enumerate(sweep_p_values):
-                for ai, ap in enumerate(a_param_grid):
-                    for bi, bp in enumerate(b_param_grid):
-                        for ti, theta_val in enumerate(theta_grid):
-                            inp = x_base.copy()
-                            xo = (inp[:, 0] - 0.5) * 2.0
-                            yo = (inp[:, 1] - 0.5) * 2.0
-                            inp[:, 0] = (np.cos(theta_val) * xo - np.sin(theta_val) * yo) / 2.0 + 0.5
-                            inp[:, 1] = (np.sin(theta_val) * xo + np.cos(theta_val) * yo) / 2.0 + 0.5
-                            inp[:, 2] = p_val / 500.0
-                            inp[:, 3] = theta_val / (np.pi / 2)
-                            inp[:, 4] = ap
-                            inp[:, 5] = bp
+            for ai, ap in enumerate(a_param_grid):
+                a_real = a_real_grid[ai]
+                for bi, bp in enumerate(b_param_grid):
+                    b_real = b_real_grid[bi]
+                    # Exact solution at ORIGINAL (unrotated) coords — once per (a, b)
+                    y_exact = dist_to_ellipse_boundary(
+                        x0_t, y0_t, a_real, b_real,
+                    ).numpy().reshape(-1, 1)
 
-                            y_exact = exact_solution_ellipse(
-                                torch.tensor(((inp[:, 0] - 0.5) * 2).astype(np.float32)),
-                                torch.tensor(((inp[:, 1] - 0.5) * 2).astype(np.float32)),
-                                ap, bp, theta=theta_val,
-                            ).numpy().reshape(-1, 1)
+                    # Batch all θ values: (n_theta_steps * N, 6)
+                    inp = np.tile(x_base, (n_theta_steps, 1)).astype(np.float32)
+                    theta_rep = np.repeat(theta_grid, N).astype(np.float32)
+                    x0_rep = np.tile(x0, n_theta_steps).astype(np.float32)
+                    y0_rep = np.tile(y0, n_theta_steps).astype(np.float32)
+                    cos_rep = np.cos(theta_rep)
+                    sin_rep = np.sin(theta_rep)
+                    inp[:, 0] = (cos_rep * x0_rep - sin_rep * y0_rep) / 2.0 + 0.5
+                    inp[:, 1] = (sin_rep * x0_rep + cos_rep * y0_rep) / 2.0 + 0.5
+                    inp[:, 2] = 1.0               # p=500
+                    inp[:, 3] = theta_rep / (np.pi / 2)
+                    inp[:, 4] = ap
+                    inp[:, 5] = bp
 
-                            pred = model(torch.from_numpy(inp).float().to(device))
-                            mse_4d[pi, ai, bi, ti] = float(torch.mean(
-                                (pred - torch.from_numpy(y_exact).float().to(device)) ** 2
-                            ).item())
-                    if (ai + 1) % 7 == 0:
-                        print(f"  p={p_val}: a {ai+1}/{n_a}")
-                print(f"  p={p_val} done")
+                    chunk_size = 50000
+                    inp_t = torch.from_numpy(inp)
+                    preds = []
+                    for c in range(0, inp_t.shape[0], chunk_size):
+                        preds.append(model(inp_t[c:c+chunk_size].to(device)).cpu())
+                    pred = torch.cat(preds).numpy().reshape(n_theta_steps, N, -1)
+
+                    y_exact_bc = np.broadcast_to(
+                        y_exact[np.newaxis, :, :], (n_theta_steps, N, 1),
+                    )
+                    mse_3d[:, ai, bi] = np.mean(
+                        (pred - y_exact_bc) ** 2, axis=(1, 2),
+                    )
+                if (ai + 1) % 7 == 0:
+                    print(f"  a {ai+1}/{n_ab}")
+
+        theta_mse = np.nanmean(mse_3d, axis=(1, 2))
+        ab_mse = np.nanmean(mse_3d, axis=0)
+
+        for ti in range(0, n_theta_steps, n_theta_steps // 5):
+            print(f"  θ={theta_grid[ti]:.4f}:  MSE_bar={theta_mse[ti]:.6e}")
+        print("MSE sweep done")
     else:
-        print("  [WARN] No base points for 4D sweep (need exact_inf)")
+        theta_mse = np.full(n_theta_steps, np.nan)
+        ab_mse = np.full((n_ab, n_ab), np.nan)
+        print("  [WARN] No base points for MSE sweep (need exact_inf)")
 
     # ---- save all MSE curves to one .npz -------------------------------
     save_dict = dict(
@@ -417,11 +441,11 @@ def run_experiment(args):
         fem_mse=np.array(fem_mse_list),
         pred_train_p=np.array(pred_train_p),
         pred_train_mse=np.array(pred_train_mse),
-        sweep_p=sweep_p_values,
+        theta=theta_grid,
         a_real=a_real_grid,
         b_real=b_real_grid,
-        theta=theta_grid,
-        mse_4d=mse_4d,
+        theta_mse=theta_mse,
+        ab_mse=ab_mse,
     )
     npz_path = os.path.join(output_dirs['npy'], 'mse.npz')
     np.savez(npz_path, **save_dict)

@@ -419,7 +419,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch-bc', type=int, default=400)
     parser.add_argument('--batch-pde', type=int, default=1000)
 
-    parser.add_argument('--clip-residual', type=float, default=10.0)
+    parser.add_argument('--clip-residual', type=float, default=100.0)
     parser.add_argument('--clip-grad-norm', type=float, default=1.0)
     parser.add_argument('--outlier-percentile', type=float, default=2.0)
     parser.add_argument('--outlier-off-epoch', type=int, default=None)
