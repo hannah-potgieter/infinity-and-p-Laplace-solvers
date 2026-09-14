@@ -1,0 +1,81 @@
+
+============================================================
+All Ellipses  —  total_div=10
+============================================================
+Device: cuda
+  Loaded p=5: 372736 points, mse: 2.419210e-03
+  Loaded p=10: 372736 points, mse: 6.431420e-04
+  Loaded p=15: 372736 points, mse: 2.912426e-04
+  Loaded p=20: 372736 points, mse: 1.655515e-04
+  Loaded p=25: 372736 points, mse: 1.067618e-04
+  Loaded p=30: 372736 points, mse: 7.460592e-05
+  Loaded p=35: 372736 points, mse: 5.511834e-05
+  Loaded p=40: 372736 points, mse: 4.241850e-05
+  Loaded p=45: 372736 points, mse: 3.368086e-05
+  Loaded p=50: 372736 points, mse: 2.741241e-05
+  Loaded p=55: 372736 points, mse: 2.276161e-05
+  Loaded p=60: 372736 points, mse: 1.921522e-05
+  Loaded p=65: 372736 points, mse: 1.644866e-05
+  Loaded p=70: 372736 points, mse: 1.424846e-05
+  Loaded p=75: 372736 points, mse: 1.246957e-05
+  Loaded p=80: 372736 points, mse: 1.101060e-05
+  Loaded p=85: 372736 points, mse: 9.798963e-06
+  Loaded p=90: 372736 points, mse: 8.781572e-06
+  Loaded p=95: 372736 points, mse: 8.196162e-06
+  Loaded p=100: 372736 points, mse: 7.581719e-06
+  Loaded p=105: 372736 points, mse: 7.239845e-06
+  Loaded p=110: 372736 points, mse: 7.078998e-06
+  Reference file: /mnt/ivan/PINNS_SVD_new/utils/Distance to boundary/2D examples/Ellipse 1/p110ellipse1Boundary.mat  (p=110)
+  Base ellipse (θ=0): 37274 pts
+  + 10 rotations of base ellipse
+  a-param 2/10
+  a-param 4/10
+  a-param 6/10
+  a-param 8/10
+  a-param 10/10
+  Total training samples: 41411414
+Training data: X=(41411414, 6)  Y=(41411414, 1)
+Model: trunk=[2, 512, 512, 512, 128]  branch=[4, 128, 128, 128, 128]  params=642,817
+Scheduler: CosineAnnealingLR  T_max=20  eta_min=1e-06
+Epoch --- Train Loss --- LR --- holdout
+    0 --- 1.142442e-03 --- 1.00e-04 --- 4.373467e-04
+    1 --- 4.092156e-04 --- 9.94e-05 --- 3.410534e-04
+    2 --- 2.849541e-04 --- 9.76e-05 --- 2.517997e-04
+    3 --- 2.110874e-04 --- 9.46e-05 --- 1.945539e-04
+    4 --- 1.715734e-04 --- 9.05e-05 --- 1.778327e-04
+    5 --- 1.435981e-04 --- 8.55e-05 --- 1.408018e-04
+    6 --- 1.233607e-04 --- 7.96e-05 --- 1.172456e-04
+    7 --- 1.082895e-04 --- 7.30e-05 --- 1.052805e-04
+    8 --- 9.635942e-05 --- 6.58e-05 --- 9.248123e-05
+    9 --- 8.525976e-05 --- 5.82e-05 --- 8.061089e-05
+   10 --- 7.713524e-05 --- 5.05e-05 --- 7.243991e-05
+   11 --- 7.110414e-05 --- 4.28e-05 --- 6.848235e-05
+   12 --- 6.697786e-05 --- 3.52e-05 --- 6.508659e-05
+   13 --- 6.390755e-05 --- 2.80e-05 --- 6.099885e-05
+   14 --- 6.146282e-05 --- 2.14e-05 --- 5.854397e-05
+   15 --- 5.949087e-05 --- 1.55e-05 --- 5.692198e-05
+   16 --- 5.792012e-05 --- 1.05e-05 --- 5.450523e-05
+   17 --- 5.669488e-05 --- 6.40e-06 --- 5.367615e-05
+   18 --- 5.580725e-05 --- 3.42e-06 --- 5.328892e-05
+   19 --- 5.525130e-05 --- 1.61e-06 --- 5.313581e-05
+Total training time: 6454.15s
+Inference (per point): 1.5180e-04s | (full domain): 1.5372e-04s
+  p=  5:  MSE=3.232877e-02
+  p=105:  MSE=2.092461e-02
+  p=205:  MSE=1.224377e-02
+  p=305:  MSE=5.979756e-03
+  p=405:  MSE=1.934966e-03
+MSE(θ,a,b) sweep at p=500: 101×21×21 = 44,541 evals, 37274 base pts
+  a 7/21
+  a 14/21
+  a 21/21
+  θ=0.0000:  MSE_bar=5.364301e-05
+  θ=0.3142:  MSE_bar=5.573191e-05
+  θ=0.6283:  MSE_bar=4.693082e-05
+  θ=0.9425:  MSE_bar=4.518613e-05
+  θ=1.2566:  MSE_bar=4.502820e-05
+  θ=1.5708:  MSE_bar=5.439749e-05
+MSE sweep done
+Saved MSE curves → outputs/expr_6_4_3/total10/exact_inf/npy/mse.npz
+
+Experiment completed!

@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+# Distance to origin (2D)
+python experiment/experiment_6_4_eikonal.py --case origin --domain square --save-npy --ring-radius 0.1 --alpha-min 1.0 --alpha-max 10.0 --positivity-weight 1.0
+python experiment/experiment_6_4_eikonal.py --case origin --domain disc   --save-npy --ring-radius 0.1 --alpha-min 1.0 --alpha-max 10.0 --positivity-weight 1.0
+
+# Distance to boundary (2D)
+python experiment/experiment_6_4_eikonal.py --domain square   --save-npy --alpha-min 1.0 --alpha-max 10.0 --positivity-weight 1.0
+python experiment/experiment_6_4_eikonal.py --domain disc     --save-npy --alpha-min 1.0 --alpha-max 10.0 --positivity-weight 1.0
+python experiment/experiment_6_4_eikonal.py --domain ellipse1 --save-npy --alpha-min 0.1 --alpha-max 1.0  --positivity-weight 100.0
+python experiment/experiment_6_4_eikonal.py --domain ellipse2 --save-npy --alpha-min 0.1 --alpha-max 1.0  --positivity-weight 100.0
+python experiment/experiment_6_4_eikonal.py --domain ellipse3 --save-npy --alpha-min 1.0 --alpha-max 10.0 --positivity-weight 100.0
+
+# Distance to boundary (3D)
+python experiment/experiment_6_4_eikonal.py --domain sphere   --save-npy --alpha-min 1.0 --alpha-max 10.0 --positivity-weight 0.5
+python experiment/experiment_6_4_eikonal.py --domain cylinder --save-npy --alpha-min 1.0 --alpha-max 10.0 --positivity-weight 0.5
+python experiment/experiment_6_4_eikonal.py --domain torus    --save-npy --alpha-min 0.1 --alpha-max 10.0 --positivity-weight 0.5

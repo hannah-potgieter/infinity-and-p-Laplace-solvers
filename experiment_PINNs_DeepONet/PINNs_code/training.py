@@ -15,7 +15,7 @@ import copy
 import os
 import shutil
 import time
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 import torch
 from torch.utils.data import TensorDataset, DataLoader
@@ -469,6 +469,9 @@ def train_pinn_iterative(
     bc_loss_threshold: Optional[float] = None,
     pde_loss_threshold: Optional[float] = None,
     resume_from_p: Optional[float] = None,
+    test_target_fn: Optional[
+        Callable[[float, torch.Tensor], torch.Tensor]
+    ] = None,
     seed: int = 1234,
     device: Optional[torch.device] = None,
 ):
@@ -477,6 +480,11 @@ def train_pinn_iterative(
 
     The model must expose a ``p`` attribute (``model.p``) which is set
     before each stage.  Alpha schedule / outlier removal reset per stage.
+
+    By default, the same ``y_test`` target is used for every stage.  Problems
+    whose exact solution depends on ``p`` can pass ``test_target_fn`` with
+    signature ``test_target_fn(p, x_test) -> y_test_at_p``.  This keeps the
+    per-epoch test loss aligned with the finite-p problem being trained.
 
     Returns:
         ``(combined_history, total_time)``
@@ -525,10 +533,22 @@ def train_pinn_iterative(
         if hasattr(alpha_scheduler, 'reset'):
             alpha_scheduler.reset()
 
+        stage_y_test = y_test
+        if test_target_fn is not None:
+            stage_y_test = test_target_fn(p, x_test)
+            if stage_y_test.ndim == 1:
+                stage_y_test = stage_y_test.view(-1, 1)
+            if stage_y_test.shape != y_test.shape:
+                raise ValueError(
+                    "test_target_fn returned shape "
+                    f"{tuple(stage_y_test.shape)}; expected {tuple(y_test.shape)}"
+                )
+            stage_y_test = stage_y_test.detach()
+
         stage_name = f"p{p}"
 
         stage_history, stage_time = train_pinn(
-            model, x_bc, y_bc, x_interior, x_test, y_test,
+            model, x_bc, y_bc, x_interior, x_test, stage_y_test,
             n_epochs=epochs_per_p,
             batch_size_bc=batch_size_bc,
             batch_size_pde=batch_size_pde,

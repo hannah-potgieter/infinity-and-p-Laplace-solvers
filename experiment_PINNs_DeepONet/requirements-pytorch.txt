@@ -1,0 +1,4 @@
+# Versions bundled with the verified PhysicsNeMo 25.06 image.
+matplotlib==3.10.1
+numpy==1.26.4
+scipy==1.15.2
