@@ -1,0 +1,4 @@
+example,width,best_epoch,best_val_mse,best_test_mse,final_test_mse,training_seconds
+arctan,256,97,1.9717e-07,8.3090e-07,9.3458e-07,912.70
+aronsson_square,256,95,2.5779e-07,5.5718e-07,6.7930e-07,850.59
+aronsson_disc,256,99,2.2628e-07,5.7044e-07,3.7740e-07,786.71

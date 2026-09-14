@@ -123,6 +123,20 @@ python -u "$script" \
     --output-dir "$output_dir" \
     --save-predictions
 
+checkpoint="$output_dir/expr_6_3_iter_distance_boundary_disc/p150to500_disc/checkpoints/final_model_p500.pt"
+python -u "$script" \
+    --p-values 600,700,800,900,1000 \
+    --epochs-per-p 50 \
+    --lr 1e-5 \
+    --scheduler none \
+    --alpha 1e-2 \
+    --val-split 0 \
+    --interior-grid 500 \
+    --seed "$seed" \
+    --resume-checkpoint "$checkpoint" \
+    --output-dir "$output_dir" \
+    --save-predictions
+
 python -u "$repo_root/experiment/collect_section_6_3_3_distance_boundary_metrics.py" \
     --run-root "$output_dir" \
     --output "$output_dir/combined_metrics.csv"

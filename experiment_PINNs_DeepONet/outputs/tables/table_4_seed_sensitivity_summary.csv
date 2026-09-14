@@ -1,0 +1,4 @@
+example,n_seeds,mean_best_test_mse,sample_sd_best_test_mse
+arctan,5,3.1181000000e-07,2.3268411312e-07
+aronsson_square,5,4.4684400000e-07,1.6961726631e-07
+aronsson_disc,5,6.2470800000e-07,2.8054743078e-07

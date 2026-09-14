@@ -14,6 +14,7 @@ experiment_PINNs_DeepONet/
 ├── plot/             manuscript plotting scripts
 │   └── data/         small plot-ready CSV files
 ├── outputs/images/   generated image files used by manuscript Figures 1--12
+├── outputs/tables/   table-ready numerical results and provenance notes
 ├── train_expr_*.sh   experiment and ablation entry points
 └── requirements-pytorch.txt
 ```
@@ -122,7 +123,7 @@ $$
 \qquad u_p=0\quad\text{on its boundary},
 $$
 
-and evaluates every saved checkpoint against the exact finite-p radial solution. The reported parameter-only schedule through $p=500$ is encoded in one portable launcher:
+and evaluates every saved checkpoint against the exact finite-p radial solution. The reported parameter-only schedule through $p=1000$ is encoded in one portable launcher:
 
 ```bash
 bash experiment/run_section_6_3_3_distance_boundary_bands.sh /path/to/run-directory
@@ -139,7 +140,7 @@ python plot/experiment_6_3_3_distance_boundary_disc_plot.py \
   --metrics-csv /path/to/run-directory/combined_metrics.csv
 ```
 
-The committed `plot/data/experiment_6_3_3_distance_boundary_disc_all_p.csv` is the plot-ready table assembled from the selected Server 1 checkpoints through $p=500$.
+The committed `plot/data/experiment_6_3_3_distance_boundary_disc_all_p.csv` is the plot-ready table assembled from the selected Server 1 checkpoints through $p=1000$.
 
 ### Supporting Eikonal PINNs for Section 6.4
 
@@ -186,6 +187,12 @@ python experiment/evaluate_section_6_4_2_disk_exact.py \
 
 The output distinguishes finite-p training inputs through $p=200$, unseen interpolation inputs in that range, PINN-augmented interpolation between $200$ and $500$, and the auxiliary input at $p=500$. It reports both the direct finite-p error `mse_exact` and the error `mse_limit` against the limiting distance profile.
 
+The selected values reported in Table 9 are committed as `outputs/tables/table_9_deeponet_direct_finite_p.csv`; the evaluator outputs through the manuscript cutoff $p=500$ are retained in `outputs/tables/table_9_deeponet_source/`.
+
+### Table-ready numerical results
+
+`outputs/tables/` contains compact CSV files for values that are quoted in tables or prose but are not naturally represented by a plotting array. See `outputs/tables/README.md` for the source run, checkpoint selection rule, evaluation environment, and any distinction between a table value and a historical training output.
+
 #### Section 6.4.3: Ellipse-family DeepONet
 
 ```bash
@@ -229,18 +236,11 @@ Run these commands from `experiment_PINNs_DeepONet/` inside the environment desc
 | Appendix | Result reproduced | Command to run |
 |---|---|---|
 | Appendix A: training hyperparameters | Main PINN and DeepONet configurations | Run the corresponding Section 6.2--6.4 Bash launcher in the main experiment table above; each launcher passes the Appendix A settings to its experiment program. |
-| Appendix B: infinity-Laplace PINN ablation | Arctan and Aronsson ablation results | `bash train_expr_6_2_ablation.sh` |
-| Appendix C: simple p-Laplace PINN ablation | Independent-training ablation results at the reported $p$ values | `bash train_expr_6_3_simple_ablation.sh` |
+| Appendix B: infinity-Laplace PINN ablation | Arctan and Aronsson ablation results, including the reported width-256 runs | `bash train_expr_6_2_ablation.sh` |
+| Appendix C: simple p-Laplace PINN ablation | Independent-training ablation results at $p=10$ and $p=200$ | `bash train_expr_6_3_simple_ablation.sh` |
 | Appendix D: iterative p-Laplace schedules | Main continuation run | `bash train_expr_6_3_iterative.sh` |
-| Appendix D: iterative p-Laplace schedules | Continuation and stabilization ablations | `bash train_expr_6_3_iterative_ablation.sh` |
-| Appendix D: direct finite-$p$ schedule | Unit-disc finite-$p$ validation through $p=500$ | `bash experiment/run_section_6_3_3_distance_boundary_bands.sh /path/to/run-directory` |
+| Appendix D: direct finite-$p$ schedule | Unit-disc finite-$p$ validation through $p=1000$ | `bash experiment/run_section_6_3_3_distance_boundary_bands.sh /path/to/run-directory` |
 | Appendix E: Eikonal PINN data generation | Eikonal solutions used as limiting-profile inputs | `bash train_expr_6_4_eikonal.sh` |
-
-For the DeepONet inclusion/exclusion comparisons, first set `FEM_ORIGIN_DATA_DIR`, `FEM_BOUNDARY_2D_DATA_DIR`, and `FEM_BOUNDARY_3D_DATA_DIR` as shown above, and then run:
-
-```bash
-bash train_expr_6_4_ablation.sh
-```
 
 ## Output layout
 

@@ -104,7 +104,7 @@ All standard PINN, Eikonal PINN, and DeepONet launchers use random seed `1234` b
 
 The FEM programs generate numerical p-Laplace solutions used by the DeepONet scripts. Because the complete datasets and checkpoints are large, they should be stored outside the Git checkout and passed through the documented `--data-dir` and `--checkpoint` options. Generated checkpoints (`*.pt`) and per-run plot directories are ignored by Git.
 
-The exact PNG artwork for Figures 1--3 is committed under `experiment_PINNs_DeepONet/outputs/images/`. The numerical arrays under `experiment_PINNs_DeepONet/outputs/` and `experiment_PINNs_DeepONet/plot/data/` are sufficient to regenerate Figures 4--12. From `experiment_PINNs_DeepONet/`, run:
+The exact PNG artwork for Figures 1--3 is committed under `experiment_PINNs_DeepONet/outputs/images/`. The numerical arrays under `experiment_PINNs_DeepONet/outputs/` and `experiment_PINNs_DeepONet/plot/data/` are sufficient to regenerate Figures 4--12. The table-ready CSV files under `experiment_PINNs_DeepONet/outputs/tables/` record the five-seed study, direct finite-$p$ validation, checkpoint reevaluations, reported solution norms, and Appendix B--C ablations. From `experiment_PINNs_DeepONet/`, run:
 
 ```bash
 python plot/replot_manuscript_figures.py
