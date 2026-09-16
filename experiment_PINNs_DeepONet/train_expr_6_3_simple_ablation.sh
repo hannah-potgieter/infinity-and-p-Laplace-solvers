@@ -3,7 +3,7 @@ set -e
 
 # Ablation study for Section 6.3 — simple (independent) training mode.
 # Tests stabilization techniques at p=10 and p=200.
-# Defaults: eta=1e-5, clip-residual=10.0, clip-grad-norm=1.0, outlier-percentile=2.0
+# Defaults: eta=1e-5, clip-residual=100.0, clip-grad-norm=1.0, outlier-percentile=2.0
 
 # ── p = 10 ──
 python experiment/experiment_6_3.py --mode simple --p 10 --domain square --save-npy --run-tag eta0                      --eta 0

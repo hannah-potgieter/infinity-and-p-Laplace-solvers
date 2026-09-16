@@ -13,4 +13,5 @@ python experiment/experiment_6_3.py --mode simple --p 10   --domain square --sav
 python experiment/experiment_6_3.py --mode simple --p 20   --domain square --save-npy
 python experiment/experiment_6_3.py --mode simple --p 50   --domain square --save-npy
 python experiment/experiment_6_3.py --mode simple --p 100  --domain square --save-npy
+python experiment/experiment_6_3.py --mode simple --p 200  --domain square --save-npy
 python experiment/experiment_6_3.py --mode simple --p 1000 --domain square --save-npy

@@ -201,7 +201,7 @@ def run_experiment(domain='square', mode='simple', p=10,
                    batch_size_bc=400, batch_size_pde=1000,
                    output_dir='outputs', val_split=0.2, patience=None,
                    resample=True, scheduler_type='cosine', scheduler_end_factor=0.01,
-                   clip_residual=10.0, clip_grad_norm=1.0, outlier_percentile=2.0,
+                   clip_residual=100.0, clip_grad_norm=1.0, outlier_percentile=2.0,
                    outlier_off_epoch=None, plot_pde_every=0,
                    save_npy=False, bc_loss_threshold=None, pde_loss_threshold=None,
                    resume_checkpoint=None, run_tag=None):
@@ -419,7 +419,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch-bc', type=int, default=400)
     parser.add_argument('--batch-pde', type=int, default=1000)
 
-    parser.add_argument('--clip-residual', type=float, default=10.0)
+    parser.add_argument('--clip-residual', type=float, default=100.0)
     parser.add_argument('--clip-grad-norm', type=float, default=1.0)
     parser.add_argument('--outlier-percentile', type=float, default=2.0)
     parser.add_argument('--outlier-off-epoch', type=int, default=None)
