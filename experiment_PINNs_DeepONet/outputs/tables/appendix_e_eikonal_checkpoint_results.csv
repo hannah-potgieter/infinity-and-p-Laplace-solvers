@@ -1,0 +1,11 @@
+problem,domain,best_epoch,best_validation_loss,best_checkpoint_test_mse,final_epoch_test_mse,used_by_deeponet
+distance-to-origin,disc,99,5.1952e-07,5.948e-07,4.4034e-07,true
+distance-to-origin,square,99,7.7940e-07,2.985e-07,3.0481e-07,true
+distance-to-boundary,disc,96,7.4928e-08,5.749e-07,6.1119e-07,true
+distance-to-boundary,square,100,9.0206e-07,1.713e-06,1.7133e-06,true
+distance-to-boundary,ellipse1,96,8.5158e-06,2.395e-06,4.1969e-06,true
+distance-to-boundary,ellipse2,100,2.1101e-05,5.838e-06,5.8380e-06,true
+distance-to-boundary,ellipse3,93,1.1952e-05,1.077e-05,1.7266e-05,true
+distance-to-boundary,ball,96,4.7199e-07,1.267e-06,1.3093e-06,true
+distance-to-boundary,cylinder,95,2.3284e-05,2.865e-05,3.0682e-05,true
+distance-to-boundary,torus,98,3.0588e-06,3.974e-06,4.2644e-06,true

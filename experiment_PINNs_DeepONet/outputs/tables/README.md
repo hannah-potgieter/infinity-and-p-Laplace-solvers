@@ -11,5 +11,6 @@ These CSV files record numerical values that are quoted in the manuscript but ar
 | `reported_solution_norms.csv` | Normalized discrete L2 norms, `sqrt(mean(u**2))`, on the stated test grids for Tables 4, 6, and 8. |
 | `appendix_b_h256_checkpoint_results.csv` | Width-256 Appendix B runs recovered from the archived Server 1 logs. |
 | `appendix_c_checkpoint_selection.csv` | Best-checkpoint and final-epoch Appendix C results. This exposes the rows for which the old table mixed final-epoch values into a best-checkpoint comparison. |
+| `appendix_e_eikonal_checkpoint_results.csv` | Records the validation-selected Eikonal checkpoint errors used to generate the $p=\infty$ inputs for DeepONet, together with the final-epoch errors for comparison. Appendix E reports the best-checkpoint values. |
 
 The Table 9 evaluator exports through the manuscript cutoff $p=500$ are retained under `table_9_deeponet_source/`. Values marked `diverged` in Appendix C are runs for which no finite best checkpoint or final test MSE was recorded.
