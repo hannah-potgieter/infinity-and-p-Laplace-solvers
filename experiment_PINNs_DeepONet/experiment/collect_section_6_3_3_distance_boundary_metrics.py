@@ -16,6 +16,7 @@ STAGE_NAMES = (
     "p25to50_disc",
     "p60to100_disc",
     "p150to500_disc",
+    "p600to1000_disc",
 )
 
 

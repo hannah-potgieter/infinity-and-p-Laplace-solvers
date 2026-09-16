@@ -72,6 +72,12 @@ def set_seed(seed=1234):
 
 def get_device():
     """Return the best available torch device (CUDA if available, else CPU)."""
+    if torch.cuda.is_available():
+        # PhysicsNeMo enables TF32 by default.  Disable it so DeepONet
+        # training and checkpoint evaluation reproduce the reported
+        # full-FP32 results across supported CUDA environments.
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
     return torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 

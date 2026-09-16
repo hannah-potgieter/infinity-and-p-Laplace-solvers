@@ -27,6 +27,8 @@ The experiments use the PhysicsNeMo 25.06 environment documented in the [root RE
 
 Run commands from this `experiment_PINNs_DeepONet/` directory. The programs select a CUDA device when one is available and otherwise fall back to the CPU.
 
+DeepONet training and checkpoint evaluation disable TensorFloat-32 matrix multiplication to reproduce the reported full-FP32 results. This setting is applied automatically by `DeepONet_code.utils.get_device()`.
+
 ### Random seeds
 
 All standard `train_expr_*.sh` launchers use seed `1234` by default. Run these scripts without a seed argument to reproduce the default manuscript configuration. The underlying Section 6.2 and DeepONet programs accept `--seed` when an override is needed; the Section 6.3 and Eikonal PINN programs currently define seed `1234` in their experiment programs. The dedicated five-seed launcher is the only workflow below that requires an explicit seed.
@@ -149,6 +151,8 @@ The Eikonal models provide the $p\to\infty$ profiles used by DeepONet when an an
 ```bash
 bash train_expr_6_4_eikonal.sh
 ```
+
+The Section 6.4 DeepONet launchers supply the validation-selected Eikonal `best_model.pt` through `--pinns-checkpoint`. Use `--pinns-checkpoint` to reproduce the reported training run. The alternative `--pinns-file` option loads a cached limiting-profile array and is provided as an evaluation convenience; because loading the cache consumes a different random-number sequence than checkpoint inference, it may not reproduce the identical training trajectory unless the random-number-generator state is explicitly preserved.
 
 ### Section 6.4: DeepONet experiments
 
